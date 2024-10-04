@@ -17,8 +17,8 @@ class content_paramaters:
     date: datetime
     content_body: str
     source_url: str
-    explicit: boolean
-    # sentiment: enum (TODO LATER)
+    # explicit: boolean (for ai TODO later
+    # sentiment: enum ( for ai TODO later)
 
 
 
