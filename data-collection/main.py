@@ -1,19 +1,24 @@
-#this class is responsible for converting between data class request_paramaters and http requests
-
+#this class is responsible for converting 
+# between incoming http requests and a request_paramaters object
+# and between a list of content paramaters object and outgoing http request 
 from dataclasses import dataclass
 @dataclass
-# TODO ASAP: DEFINE THESE CLASSES
+# FINAL? data classes (any changes to these should be announced)
 class request_paramaters:
-    website: str
-    date_start: str
-    date_end: str
-    keywords: list
+    websites: list(str)
+    date_start: datetime
+    date_end: datetime
+    query: list(str)
+    sentiment: enum{POSITVE, NEGATIVE, NEUTRAL}
 
 @dataclass
 class content_paramaters:
     username: str
-    date: str
+    date: datetime
     content_body: str
+    source_url: str
+    explicit: boolean
+    # sentiment: enum (TODO LATER)
 
 
 
@@ -27,16 +32,8 @@ def http_listener():
         if(http_request):
             start_new_thread(parse_http(http_request))
 
-def parse_http(http_request):
+def parse_http(http_request): 
     if(http_request is valid):
-        query = request_paramaters(parse(http_request))
-        sources = get_urls(query)
-        output = list(content_paramaters)
-        for(url, source) in sources:
-            if(source==reddit):
-                for content in scrape_reddit(url):
-                    output.append(content)
-            if(source==bugzilla):
-                for content in scrape_bugzilla(url):
-                    output.append(content)
-        convert_to_http_response(output)
+        user_paramters = parse(http_request) # type of request_paramaters
+        output = list[content_paramaters] = split(paramaters)
+        convert_to_http(output)
