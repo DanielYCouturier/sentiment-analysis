@@ -19,17 +19,20 @@ def initilize_reddit(): # An api key is need can share mine later
     client_id = env_vars.get("client_id")
     client_secret = env_vars.get("client_secret")
     user_agent = env_vars.get("user_agent")
+
     reddit = praw.Reddit(
         client_id = client_id,
         client_secret = client_secret,
         user_agent = user_agent,
     )
+    
     return reddit
 
 def scrape_reddit(reddit,company,parameters_limit,parameter_time): #TODO DEFINE PARAMETERS
     posts = [] # posts
     subreddit = reddit.subreddit(company)
     for submission in subreddit.new(limit=parameters_limit):
+
         all_text = []
         submission.comments.replace_more(limit=0)
         for comment in submission.comments.list():
@@ -43,6 +46,7 @@ def scrape_reddit(reddit,company,parameters_limit,parameter_time): #TODO DEFINE 
                 comments = all_text
                 )
         posts.append(post)
+
     return posts
 
 if __name__ == "__main__":
@@ -50,6 +54,6 @@ if __name__ == "__main__":
     parameter_limit = 25
     parameter_time = "year"
     posts = scrape_reddit(reddit,"netflix",parameter_limit,parameter_time)
-    print(len(posts))
+
     for post in posts:
         print(post)
