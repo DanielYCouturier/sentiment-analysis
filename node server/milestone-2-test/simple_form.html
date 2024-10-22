@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Milestone 2 Demo</title>
+    <link rel="stylesheet" href="simple_form.css">
+    <script src="form_submission.js" defer></script>
+</head>
+<body>
+    <form id="data-form">
+        <div class="form-group">
+            <label for="query">Query</label>
+            <input type="text" id="query" name="query" required>
+        </div>
+        <div class="form-group">
+            <label for="date-start">Date Start</label>
+            <input type="text" id="dateStart" name="dateStart" required>
+        </div>
+        <div class="form-group">
+            <label for="date-end">Date End</label>
+            <input type="text" id="dateEnd" name="dateEnd" required>
+        </div>
+        <div class="form-group">
+            <label for="source-dropdown">From Source</label>
+            <select class="inputBox" id="source-dropdown" name="sources">
+                <option value="All">All</option>
+                <option value="Reddit">Reddit</option>
+                <option value="Bugzilla">Bugzilla</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="sentiment-dropdown">Sentiment</label>
+            <select class="inputBox" id="sentiment-dropdown" name="sentiment">
+                <option value="All">All</option>
+                <option value="Positive">Positive</option>
+                <option value="Negative">Negative</option>
+            </select> 
+        </div>
+        <input type="submit" value="Submit" id="submit-form-button">
+    </form>
+    <button id="clear-button">Clear</button>
+    <ul id = "server-responses">     <!-- Added with JS--> 
+    </ul>
+</body>
+</html>
