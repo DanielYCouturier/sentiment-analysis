@@ -1,5 +1,0 @@
-Query: ms outlook
-Date Start: 10-10-24
-Date End: 10-10-32
-Sources: All
-Sentiment: All

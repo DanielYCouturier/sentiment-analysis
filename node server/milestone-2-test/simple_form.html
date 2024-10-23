@@ -13,26 +13,27 @@
         </div>
         <div class="form-group">
             <label for="date-start">Date Start</label>
-            <input type="text" id="dateStart" name="dateStart" required>
+            <input type="date" id="dateStart" name="dateStart" required>
         </div>
         <div class="form-group">
             <label for="date-end">Date End</label>
-            <input type="text" id="dateEnd" name="dateEnd" required>
+            <input type="date" id="dateEnd" name="dateEnd" required>
         </div>
         <div class="form-group">
             <label for="source-dropdown">From Source</label>
             <select class="inputBox" id="source-dropdown" name="sources">
-                <option value="All">All</option>
-                <option value="Reddit">Reddit</option>
-                <option value="Bugzilla">Bugzilla</option>
+                <option value="ALL">All</option>
+                <option value="REDDIT">Reddit</option>
+                <option value="BUGZILLA">Bugzilla</option>
             </select>
         </div>
         <div class="form-group">
             <label for="sentiment-dropdown">Sentiment</label>
             <select class="inputBox" id="sentiment-dropdown" name="sentiment">
-                <option value="All">All</option>
-                <option value="Positive">Positive</option>
-                <option value="Negative">Negative</option>
+                <option value="ALL">All</option>
+                <option value="POSITIVE">Positive</option>
+                <option value="NEGATIVE">Negative</option>
+                <option value="NEUTRAL">Neutral</option>
             </select> 
         </div>
         <input type="submit" value="Submit" id="submit-form-button">

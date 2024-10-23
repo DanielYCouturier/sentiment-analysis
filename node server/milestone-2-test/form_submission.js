@@ -15,13 +15,18 @@ document.getElementById('data-form').addEventListener('submit', function (event)
         },
         body: JSON.stringify(data)
     })
-        .then(response => response.json())
+        .then(response => {
+            if(!response.ok){
+                throw new Error("Invalid POST request")
+            }
+            return response.json()
+        })
         .then(result => {
-            console.log('Received from server:', result);
+            console.log('Received JSON from server:', result);
             createCards(result);
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error(error);
         });
 });
 
