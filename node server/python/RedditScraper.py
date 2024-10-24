@@ -1,6 +1,12 @@
 import praw
 import requests
 from dotenv import dotenv_values
+import logging
+import time
+from typing import List
+
+# Set up basic logging configuration
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class Post:
     def __init__(self, post, text, url, date, comments):
@@ -11,49 +17,59 @@ class Post:
         self.comments = comments
 
     def __repr__(self):
-        return f"Post(Title: {self.post}, Text: {len(self.text)}, # Comments: {len(self.comments)})"
+        return f"Post(Title: {self.post}, Text: {len(self.text)} characters, # Comments: {len(self.comments)})"
 
-def initilize_reddit(): # An api key is need can share mine later
-    env_vars = dotenv_values(".env")
-
-    client_id = env_vars.get("client_id")
-    client_secret = env_vars.get("client_secret")
-    user_agent = env_vars.get("user_agent")
-
-    reddit = praw.Reddit(
-        client_id = client_id,
-        client_secret = client_secret,
-        user_agent = user_agent,
-    )
+def initialize_reddit() -> praw.Reddit:
+    """
+    Initialize Reddit API using credentials from a .env file.
     
-    return reddit
+    Returns:
+        praw.Reddit: An authenticated Reddit API instance.
+    """
+    try:
+        env_vars = dotenv_values(".env")
+        client_id = env_vars["client_id"]
+        client_secret = env_vars["client_secret"]
+        user_agent = env_vars["user_agent"]
+        logging.info("Reddit API credentials loaded successfully")
+    except KeyError as e:
+        logging.error(f"Missing environment variable: {e}")
+        raise ValueError(f"Missing environment variable: {e}")
 
-def scrape_reddit(reddit,company,parameters_limit,parameter_time): #TODO DEFINE PARAMETERS
-    posts = [] # posts
-    subreddit = reddit.subreddit(company)
-    for submission in subreddit.new(limit=parameters_limit):
+    return praw.Reddit(client_id=client_id, client_secret=client_secret, user_agent=user_agent)
 
-        all_text = []
-        submission.comments.replace_more(limit=0)
-        for comment in submission.comments.list():
-            all_text.append(comment.body) # comment
-        
-        post = Post(
-                post = submission.title,
-                text = submission.selftext,
-                url = submission.url,
-                date = submission.created,
-                comments = all_text
-                )
-        posts.append(post)
+def scrape_reddit(reddit: praw.Reddit, subreddit_name: str, parameters_limit: int = 10, parameter_time: str = "week") -> List[Post]:
+    """
+    Scrape posts from a specified subreddit.
 
+    Args:
+        reddit (praw.Reddit): An authenticated Reddit instance.
+        subreddit_name (str): The name of the subreddit to scrape.
+        parameters_limit (int): The number of posts to scrape. Defaults to 10.
+        parameter_time (str): The time filter for posts (e.g., "day", "week"). Defaults to "week".
+
+    Returns:
+        List[Post]: A list of Post objects scraped from the subreddit.
+    """
+    posts = []
+    
+    try:
+        subreddit = reddit.subreddit(subreddit_name)
+        for submission in subreddit.new(limit=parameters_limit):
+            post = Post(
+                post=submission.title,
+                text=submission.selftext,
+                url=submission.url,
+                date=submission.created_utc,
+                comments=list(submission.comments)
+            )
+            posts.append(post)
+            logging.info(f"Scraped post: {post}")
+            time.sleep(1)  # Add a delay to avoid rate limiting
+    except praw.exceptions.RequestException as e:
+        logging.error(f"Error fetching data from Reddit: {e}")
+    except Exception as e:
+        logging.error(f"An unexpected error occurred: {e}")
+
+    logging.info(f"Total posts scraped: {len(posts)}")
     return posts
-
-if __name__ == "__main__":
-    reddit = initilize_reddit()
-    parameter_limit = 25
-    parameter_time = "year"
-    posts = scrape_reddit(reddit,"netflix",parameter_limit,parameter_time)
-
-    for post in posts:
-        print(post)
