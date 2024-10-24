@@ -1,7 +1,7 @@
 const card_list = document.getElementById('server-responses')
 document.getElementById('data-form').addEventListener('submit', function (event) {
     event.preventDefault();
-
+    card_list.innerHTML = ""
     const formData = new FormData(this);
     const data = {};
     formData.forEach((value, key) => {

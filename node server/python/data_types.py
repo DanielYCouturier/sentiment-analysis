@@ -33,9 +33,18 @@ class ContentParameters:
     explicit: bool
     sentiment: Sentiment
 @dataclass
+class UnclassifiedContent:
+    username: str
+    content_body: str
+    date: datetime
+    source_url: str
+@dataclass
 class RequestParameters:
     query: str
     date_start: datetime
     date_end: datetime
     websites: List[str]
     sentiment: Sentiment
+
+def filter_by_date_range(content_list: List[UnclassifiedContent], date_start: datetime, date_end: datetime) -> List[UnclassifiedContent]:
+    return [item for item in content_list if (date_start <= item.date and item.date <= date_end)]

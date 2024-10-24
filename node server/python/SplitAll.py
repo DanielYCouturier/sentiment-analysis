@@ -1,23 +1,26 @@
-from data_types import *
+from sys import argv
+from data_types import RequestParameters, Source, Sentiment
+from datetime import datetime
+from BugzillaScraper import scrape_bugzilla
 from typing import List
-# this class is responsible for interpreting the user query as relavent calls to RedditScraper.py and BugzillaScraper.py
-# potentially use google api/scraping to find relavent urls or other parameters?
-# potentially use reddit/bugzilla searches to find?
-# potentially other method?
+from AI_Interface import classify
 
-#eg if paramaters.query == "ms outlook" and paramters with paramters.websites == ["Reddit"],
-# then ScrapeReddit() should be called for each subreddit r/Outlook, and MAYBE r/Microsoft, and pass remaining paramaters.
-# importantly, if websites.contains(all), appropriate logic
-
-def split(request_paramaters):
-    output = List[RequestParameters]
-    # if(request_source contains reddit)
-    # output.appendAll(scrape_reddit(subreddit, request_paramaters))
-    # if(request_source contans bugzilla)
-    # output.appendAll(scrape_bugzilla(subpage, request_paramaters))
-    # if(request_source contains bugzilla and reddit)
-    # output.appendAll(scrape_reddit(subreddit, request_paramaters))
-    # output.appendAll(scrape_bugzilla(subpage, request_paramaters))
-
-
-    return output
+def split(request_paramaters: RequestParameters):
+    output =[]
+    if(Source.BUGZILLA in request_paramaters.websites):
+        try:
+            output+=scrape_bugzilla(request_paramaters.query,request_paramaters.date_start,request_paramaters.date_end)
+        except Exception:
+            pass #do not interfere with stdout
+    return [classify(item) for item in output]
+if __name__=="__main__":
+    test_params = RequestParameters(
+        query=argv[1],
+        date_start=datetime(2024,1,1),
+        date_end=datetime(2025,1,1),
+        websites=[Source.REDDIT,Source.BUGZILLA],
+        sentiment=Sentiment.ALL
+    )
+    results = split(test_params)
+    for result in results:
+        print(result)

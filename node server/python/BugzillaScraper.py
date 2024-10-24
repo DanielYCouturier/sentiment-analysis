@@ -2,9 +2,11 @@ import requests
 import pandas as pd
 from io import StringIO
 from sys import argv
-
+from typing import List
+from data_types import UnclassifiedContent, filter_by_date_range
+from datetime import datetime
 # Define a class to hold bug details
-class Bug:
+class Bugzilla_Bug:
     def __init__(self, bug_id, bug_type, short_desc, product, component, assigned_to, bug_status, resolution, changeddate):
         self.bug_id = bug_id
         self.bug_type = bug_type
@@ -21,25 +23,25 @@ class Bug:
 
 
 # Function to scrape Bugzilla based on a search term
-def scrape_bugzilla(search_term):
+def get_data_frame(search_term):
     # Build the URL dynamically using the passed search term
     url = f'https://bugzilla-dev.allizom.org/buglist.cgi?quicksearch={search_term}&ctype=csv'
 
     response = requests.get(url)
     
     if response.status_code == 200:
-        df = pd.read_csv(StringIO(response.text))
+        data_frame = pd.read_csv(StringIO(response.text))
     else:
         raise Exception(f"Failed to retrieve data from Bugzilla. Status Code: {response.status_code}")
-    return df
+    return data_frame
 
 # Function to parse the CSV and create Bug objects for each row
-def parse_csv(df):
+def parse_csv(data_frame):
     bugs = []
     # Iterate through each row and create Bug objects
-    for _, row in df.iterrows():
+    for _, row in data_frame.iterrows():
         # Extract the relevant fields
-        bug = Bug(
+        bug = Bugzilla_Bug(
             bug_id=row['bug_id'],
             bug_type=row['bug_type'],
             short_desc=row['short_desc'],
@@ -53,10 +55,30 @@ def parse_csv(df):
         bugs.append(bug)
     return bugs
 
+def bug_to_content(bug_list: List[Bugzilla_Bug]):
+    unclassified_content_list = []
+    for bug in bug_list:
+        try:
+            content_param = UnclassifiedContent(
+                username="Bug ID: "+str(bug.bug_id),
+                content_body=bug.short_desc, 
+                date=datetime.strptime(bug.changeddate, "%Y-%m-%d %H:%M:%S"),
+                source_url='http://example.com',
+            )
+            unclassified_content_list.append(content_param)
+        except Exception:
+            pass #do not interfere with stdout
+    return unclassified_content_list
+
+
+
+def scrape_bugzilla(search_term, date_start: datetime, date_end: datetime):
+    data_frame = get_data_frame(search_term)
+    bug_list = parse_csv(data_frame)
+    unclassified_content = bug_to_content(bug_list)
+    return filter_by_date_range(unclassified_content,date_start,date_end)
 # Example usage of the function
 if __name__ == "__main__":
-
-    csv_file = scrape_bugzilla(argv[1])
-    bugs = parse_csv(csv_file)
+    bugs = scrape_bugzilla(argv[1], datetime(2023,1,1), datetime(2024,1,1))
     for bug in bugs:
         print(bug)

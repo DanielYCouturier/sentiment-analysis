@@ -43,29 +43,9 @@ def main(query, date_start, date_end, sources, sentiment):
         websites=website_list,
         sentiment=parse_sentiment(sentiment)
     )
-
-    split(request_params)
-    # debug_write_parameters_to_file(request_params, "parameters.txt")
-    
-    contents = [
-        ContentParameters(
-            username="John Doe",
-            content_body="This is the content body.",
-            date=datetime(2024, 10, 21),
-            source_url="http://example.com",
-            explicit=False,
-            sentiment=Sentiment.POSITIVE
-        ),
-        ContentParameters(
-            username="Jane Doe",
-            content_body="Another content body example.",
-            date=datetime(2024, 10, 22),
-            source_url="http://example.org",
-            explicit=True,
-            sentiment=Sentiment.NEGATIVE
-        )
-    ]
-    global_return(contents)
+    content_list = split(request_params)
+ 
+    global_return(content_list)
 
 if __name__ == "__main__":
     query, date_start, date_end, sources, sentiment = json.loads(sys.argv[1])
