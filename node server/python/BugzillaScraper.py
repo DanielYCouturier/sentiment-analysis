@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 from io import StringIO
+from sys import argv
 
 # Define a class to hold bug details
 class Bug:
@@ -50,12 +51,12 @@ def parse_csv(df):
             changeddate=row['changeddate']
             )
         bugs.append(bug)
-        return bugs
+    return bugs
 
 # Example usage of the function
 if __name__ == "__main__":
 
-    csv_file = scrape_bugzilla('google')
+    csv_file = scrape_bugzilla(argv[1])
     bugs = parse_csv(csv_file)
     for bug in bugs:
         print(bug)
