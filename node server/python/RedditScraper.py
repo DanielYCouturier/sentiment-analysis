@@ -1,84 +1,108 @@
 import praw
-import requests
 from dotenv import dotenv_values
-import logging
-import time
+from datetime import datetime
+from data_types import UnclassifiedContent, filter_by_date_range
 from typing import List
-
-# Set up basic logging configuration
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
+from sentiment_logging import *
 class Post:
-    def __init__(self, post, text, url, date, comments):
-        self.post = post
+    """
+    A data class representing individual reddit posts
+    """
+    def __init__(self, body, text, url, date, comments):
+        self.body= body
         self.text = text
         self.url = url
         self.date = date
         self.comments = comments
-
     def __repr__(self):
-        return f"Post(Title: {self.post}, Text: {len(self.text)} characters, # Comments: {len(self.comments)})"
+        return f"Post(Title: {self.post}, Text: {len(self.text)}, # Comments: {len(self.comments)})"
 
-def initialize_reddit() -> praw.Reddit:
+def initilize_reddit() -> praw.Reddit:
     """
-    Initialize Reddit API using credentials from a .env file.
+    Success:
+        Initializes Reddit API using credentials from a .env file.
+    Failure:
+        Throws exception to be caught in parent class
+    """
+    env_vars = dotenv_values(".env")
+
+    client_id = "REDACTED"
+    client_secret = "REDACTED"
+    user_agent = "REDACTED"
+
+    reddit = praw.Reddit(
+        client_id = client_id,
+        client_secret = client_secret,
+        user_agent = user_agent,
+    )
     
-    Returns:
-        praw.Reddit: An authenticated Reddit API instance.
+    return reddit
+
+def get_posts(company: str,parameters_limit:int = 10) -> List[Post]:
     """
-    try:
-        env_vars = dotenv_values(".env")
-        client_id = env_vars["client_id"]
-        client_secret = env_vars["client_secret"]
-        user_agent = env_vars["user_agent"]
-        logging.info("Reddit API credentials loaded successfully")
-    except KeyError as e:
-        logging.error(f"Missing environment variable: {e}")
-        raise ValueError(f"Missing environment variable: {e}")
-
-    return praw.Reddit(client_id=client_id, client_secret=client_secret, user_agent=user_agent)
-
-def scrape_reddit(reddit: praw.Reddit, subreddit_name: str, parameters_limit: int = 10, parameter_time: str = "week") -> List[Post]:
+    Success: 
+        Returns all posts from reddit matching search_term
+    Failure: 
+        Individual posts or comments that cannot be parsed are thrown out
     """
-    Scrape posts from a specified subreddit.
-
-    Args:
-        reddit (praw.Reddit): An authenticated Reddit instance.
-        subreddit_name (str): The name of the subreddit to scrape.
-        parameters_limit (int): The number of posts to scrape. Defaults to 10.
-        parameter_time (str): The time filter for posts (e.g., "day", "week"). Defaults to "week".
-
-    Returns:
-        List[Post]: A list of Post objects scraped from the subreddit.
-    """
-    posts = []
-    
-    try:
-        subreddit = reddit.subreddit(subreddit_name)
-        for submission in subreddit.new(limit=parameters_limit):
-            if not submission.stickied and submission.is_self:
-                normalized_title = submission.title.lower()
-                if subreddit_name in normalized_title:
-                    post = Post(
-                        post=submission.title,
-                        text=submission.selftext,
-                        url=submission.url,
-                        date=submission.created_utc,
-                        comments=list(submission.comments)
-                    )
-                    posts.append(post)
-                    logging.info(f"Scraped post: {post}")
-                    time.sleep(1)  # Add a delay to avoid rate limiting
-    except praw.exceptions.RequestException as e:
-        logging.error(f"Error fetching data from Reddit: {e}")
-    except Exception as e:
-        logging.error(f"An unexpected error occurred: {e}")
-
-    logging.info(f"Total posts scraped: {len(posts)}")
+    posts = [] 
+    reddit = initilize_reddit()
+    subreddit = reddit.subreddit(company)
+    for submission in subreddit.new(limit=parameters_limit):
+        if not submission.stickied and submission.is_self:
+            normalized_title = submission.title.lower()
+            if company in normalized_title:
+                post = Post(
+                    body=submission.title,
+                    text=submission.selftext,
+                    url=submission.url,
+                    date=submission.created_utc,
+                    comments=list(submission.comments)
+                )
+                posts.append(post)
     return posts
 
+def posts_to_content(post_list: List[Post]) -> List[UnclassifiedContent]:
+    """
+    Success:
+        List of reddit posts is parsed into list of content objects
+    Failure:
+        Individual results that cannot be parsed are thrown out
+    """
+    unclassified_content_list = []
+    for post in post_list:
+        try:
+            content_param = UnclassifiedContent(
+                title=post.body,
+                username ="N/A",
+                content_body= post.text,
+                date= datetime.fromtimestamp(post.date),
+                source_url='http://example.com'
+            )
+            unclassified_content_list.append(content_param)
+        except Exception:
+            log("RedditScraper.posts_to_content failed to parse post: "+str(post))
+    return unclassified_content_list
+
+def scrape_reddit(search_term : str, parameter_limit: int, date_start: datetime, date_end: datetime) -> List[UnclassifiedContent]:
+    """
+    Scrape Reddit posts based on a search term and filter them by date range.
+    Args:
+        search_term (str): The search term to use in the query.
+        parameters_limit (int): The number of posts to scrape. Defaults to 10.
+        date_start (datetime): The start date for filtering posts.
+        date_end (datetime): The end date for filtering posts.
+    Returns:
+        List[UnclassifiedContent]: A list of content objects that match the criteria.
+    """
+    posts = get_posts(search_term,parameter_limit)
+    unclassified_content = posts_to_content(posts)
+    unclassified_content = filter_by_date_range(unclassified_content,date_start,date_end)
+    return unclassified_content
+
+# Example usage of the class
 if __name__ == "__main__":
-    reddit = initialize_reddit()
-    parameter_limit = 50
-    parameter_time = "year"
-    posts = scrape_reddit(reddit,"netflix",parameter_limit,parameter_time)
+    parameter_limit = 1
+    posts = scrape_reddit("microsoft",parameter_limit, datetime(2023,1,1), datetime(2024,1,1))
+    for post in posts:
+        print(post)

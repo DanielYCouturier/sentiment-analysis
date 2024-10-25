@@ -26,13 +26,15 @@ app.post('/getData', (req, res) => {
     });
 
     pythonProcess.on('close', (code) => {
-        if (code !== 0 || errorData) {
+        if (code !== 0 || !data) {
             console.log(`Error while executing python code: get_data.py with parameters "${args}"`)
             console.log(`System Time: ${new Date()}`)
             console.log(`Error Message: \n${errorData}`)
             return res.status(500).json({ error: `Server Error while parsing POST request parameters` });
         }
         try {
+            console.log("SUCCESS")
+            console.log(errorData)
             const responseObject = JSON.parse(data.trim());
             res.json(responseObject);
         } catch (jsonError) {
