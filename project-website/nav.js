@@ -39,6 +39,12 @@ function changeSrc(link) {
         case "2-5":
             src = 'https://docs.google.com/document/d/e/2PACX-1vTbGLjqaxVgJHjf8XAMzGx2Z1v8AzbBE0zguOW-WkhmW2OqInVmJY_kqHjiUbFT0jTH8wKk-O73ktf6/pub?embedded=true'
             break
+        case "3-1":
+            src = "https://docs.google.com/presentation/d/e/2PACX-1vSlfvXuh9OnNgOHAZFfTekH5NYp9eKvTaWJWqQNmzE5Q-hJCSd-mMx55w4Ft-RhUCIh9s_tnrEFwbh0/embed?start=false&loop=false&delayms=3000"
+            break
+        case "3-2":
+            src = "https://docs.google.com/document/d/e/2PACX-1vT5hwF-rLCVF6fnKHV3kdjXxtksldxeBMLkQXs0F6jM7VothG6sO9lwy6h-fq3YhBZoPhOZjJJLQHij/pub?embedded=true"
+            break
         default:
             src = null;
             break;
