@@ -56,16 +56,19 @@ def scrape_reddit(reddit: praw.Reddit, subreddit_name: str, parameters_limit: in
     try:
         subreddit = reddit.subreddit(subreddit_name)
         for submission in subreddit.new(limit=parameters_limit):
-            post = Post(
-                post=submission.title,
-                text=submission.selftext,
-                url=submission.url,
-                date=submission.created_utc,
-                comments=list(submission.comments)
-            )
-            posts.append(post)
-            logging.info(f"Scraped post: {post}")
-            time.sleep(1)  # Add a delay to avoid rate limiting
+            if not submission.stickied and submission.is_self:
+                normalized_title = submission.title.lower()
+                if subreddit_name in normalized_title:
+                    post = Post(
+                        post=submission.title,
+                        text=submission.selftext,
+                        url=submission.url,
+                        date=submission.created_utc,
+                        comments=list(submission.comments)
+                    )
+                    posts.append(post)
+                    logging.info(f"Scraped post: {post}")
+                    time.sleep(1)  # Add a delay to avoid rate limiting
     except praw.exceptions.RequestException as e:
         logging.error(f"Error fetching data from Reddit: {e}")
     except Exception as e:
@@ -73,3 +76,9 @@ def scrape_reddit(reddit: praw.Reddit, subreddit_name: str, parameters_limit: in
 
     logging.info(f"Total posts scraped: {len(posts)}")
     return posts
+
+if __name__ == "__main__":
+    reddit = initialize_reddit()
+    parameter_limit = 50
+    parameter_time = "year"
+    posts = scrape_reddit(reddit,"netflix",parameter_limit,parameter_time)
