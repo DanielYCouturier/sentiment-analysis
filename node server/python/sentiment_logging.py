@@ -7,4 +7,4 @@ def catch_all(run):
         stderr.write(e)
         exit()
 def log(message):
-    stderr.write("INFO: "+message)
+    stderr.write("INFO: "+str(message)+"\n")

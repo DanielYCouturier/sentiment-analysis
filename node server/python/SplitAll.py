@@ -17,6 +17,7 @@ def split(request_paramaters: RequestParameters) -> ContentParameters:
     output =[]
     if(Source.BUGZILLA in request_paramaters.websites):
         try:
+            log("Scraping Bugzilla")
             output+=scrape_bugzilla(request_paramaters.query,request_paramaters.date_start,request_paramaters.date_end)
         except Exception as e:
             log("SplitAll.split failed to get data from bugzilla")
@@ -25,6 +26,7 @@ def split(request_paramaters: RequestParameters) -> ContentParameters:
         try:
             output+=scrape_reddit(request_paramaters.query, 3, request_paramaters.date_start, request_paramaters.date_end)
         except Exception as e:
+            log("Scraping Reddit")
             log("SplitAll.split failed to get data from reddit")
             log(e)
     return [classify(item) for item in output]
