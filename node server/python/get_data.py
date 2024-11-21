@@ -20,6 +20,7 @@ def global_return(content_list: List[ContentParameters]):
             "username": content.username,
             "content_body": content.content_body,
             "date": content.date.isoformat(),
+            "source": content.source.value,
             "source_url": content.source_url,
             "explicit": content.explicit,
             "sentiment": content.sentiment.value

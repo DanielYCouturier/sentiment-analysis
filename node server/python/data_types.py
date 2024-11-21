@@ -30,6 +30,7 @@ class ContentParameters:
     username: str
     content_body: str
     date: datetime
+    source: Source
     source_url: str
     explicit: bool
     sentiment: Sentiment
@@ -39,6 +40,7 @@ class UnclassifiedContent:
     username: str
     content_body: str
     date: datetime
+    source: Source
     source_url: str
 @dataclass
 class RequestParameters:

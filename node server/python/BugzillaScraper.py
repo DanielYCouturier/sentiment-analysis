@@ -3,7 +3,7 @@ import pandas as pd
 from io import StringIO
 from sys import argv
 from typing import List
-from data_types import UnclassifiedContent, filter_by_date_range
+from data_types import UnclassifiedContent, filter_by_date_range, Source
 from datetime import datetime
 from sentiment_logging import log
 # Define a class to hold bug details
@@ -81,6 +81,7 @@ def bug_to_content(bug_list: List[Bugzilla_Bug]) -> List[UnclassifiedContent]:
                 username="N/A",
                 content_body=bug.short_desc, 
                 date=datetime.strptime(bug.changeddate, "%Y-%m-%d %H:%M:%S"),
+                source=Source.BUGZILLA,
                 source_url='http://example.com',
             )
             unclassified_content_list.append(content_param)

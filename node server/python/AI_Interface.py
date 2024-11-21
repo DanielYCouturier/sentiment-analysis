@@ -5,6 +5,7 @@ def classify(content: UnclassifiedContent):
         username=content.username,
         content_body=content.content_body,
         date=content.date,
+        source=content.source,
         source_url=content.source_url,
         explicit=True,
         sentiment=Sentiment.NEUTRAL

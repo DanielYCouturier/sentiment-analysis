@@ -24,9 +24,9 @@ def split(request_paramaters: RequestParameters) -> ContentParameters:
             log(e)
     if(Source.REDDIT in request_paramaters.websites):
         try:
+            log("Scraping Reddit")
             output+=scrape_reddit(request_paramaters.query, 3, request_paramaters.date_start, request_paramaters.date_end)
         except Exception as e:
-            log("Scraping Reddit")
             log("SplitAll.split failed to get data from reddit")
             log(e)
     return [classify(item) for item in output]

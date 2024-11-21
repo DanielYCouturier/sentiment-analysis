@@ -21,23 +21,34 @@ mongoose.connect('mongodb://localhost:27017/sentiment-analysis')
 // Main server interface
 app.post('/getData', async (req, res) => {
     // Step 1: Interpret the post req parameters
-    const { query, dateStart, dateEnd, sources, sentiment } = req.body;
-    console.log(`Received req from client: \nquery: ${query}\ndateStart: ${dateStart}\ndateEnd: ${dateEnd}\nsources: ${sources}\nsentiment: ${sentiment}`)
-    // Step 2: Check if parameters are in database
+    const { query, dateStart, dateEnd, source, sentiment } = req.body;
+    console.log(`Received req from client: \n\tquery: ${query}\n\tdateStart: ${dateStart}\n\tdateEnd: ${dateEnd}\n\tsource: ${source}\n\tsentiment: ${sentiment}`)
+    const dateStartObject = new Date(dateStart)
+    const dateEndObject = new Date(dateEnd)
+    // Step 2: Check if parameters are in database, or a superset is.
     const cachedQuery = await Query.findOne({
         keyword: query,
-        source: sources,
-        datestart: dateStart,
-        dateend: dateEnd
+        $or: [
+            { source: source },
+            { source: "ALL" }
+        ],
+        datestart: { $lte: dateStartObject },
+        dateend: { $gte: dateEndObject},
     }).populate('contentid');
-    // Step 3: If query is already in database, return results
+    // Step 3: If query is already in database, return results that match from superset
     if (cachedQuery) {
-        console.log("Found results in database")
-        const content = cachedQuery.contentid.map(content => ({
+        const filteredContent = cachedQuery.contentid.filter(content => 
+            (source === "ALL" || content.source === source) &&
+            content.date >= dateStartObject && 
+            content.date <= dateEndObject
+        );
+        console.log(`Found ${filteredContent.length} matching of ${cachedQuery.contentid.length} relavent results in database`)
+        const content = filteredContent.map(content => ({
             title: content.title,
             username: content.username,
             content_body: content.content_body,
             date: content.date.toISOString(),
+            source: content.source,
             source_url: content.source_url,
             explicit: "FALSE",
             sentiment: "NEUTRAL"
@@ -48,7 +59,7 @@ app.post('/getData', async (req, res) => {
 
     console.log("Failed to find results in database")
     //Step 4: Fallthrough; Spawn python process to scrape data
-    const args = [query, dateStart, dateEnd, sources, sentiment];
+    const args = [query, dateStart, dateEnd, source, sentiment];
     const pythonProcess = spawn('python3', ['python/get_data.py', JSON.stringify(args)]);
 
     let pythonOutput = '';
@@ -72,29 +83,44 @@ app.post('/getData', async (req, res) => {
         try {
             const contentList = JSON.parse(pythonOutput.trim());
 
-            // Step 5: Save new content in database
+            // Step 5: Save content from python process in database
             const contentDocs = await Content.insertMany(contentList.map(item => ({  
                 title: item.title,
                 username: item.username,
                 content_body: item.content_body,
-                date: new Date(item.date), 
+                date: new Date(item.date),
+                source: source, 
                 source_url: item.source_url
             }))); 
+            console.log(`Inserted ${contentList.length} new results to database`)
             const contentIds = contentDocs.map(doc => doc._id);
-            // Step 6: Save the new query in the database
+            // Step 6: If new data is a supeset of any queries, merge them all into 1 new query 
+            const subsetQueries = await Query.find({
+                keyword: query,
+                datestart: { $gte: dateStartObject},
+                dateend: { $lte: dateEndObject },
+                ...(source !== "ALL" && { source: source }), // Add `source` condition only if it's not "ALL"
+            });
+            let mergedContentIds = new Set(contentIds);
+            subsetQueries.forEach(subsetQuery => {
+                subsetQuery.contentid.forEach(id => mergedContentIds.add(id.toString()));
+            });
+            const subsetQueryIds = subsetQueries.map(q => q._id);
+            await Query.deleteMany({ _id: { $in: subsetQueryIds } });
+            console.log(`Deleted ${subsetQueries.length} subset queries`)
+            // Step 7: Save the new query in the database
             const newQuery = new Query({
                 keyword: query,
-                source: sources,
-                datestart: new Date(dateStart),
-                dateend: new Date(dateEnd), 
+                source: source,
+                datestart: dateStartObject,
+                dateend: dateEndObject, 
                 requestcount: 10,
-                contentid: contentIds,
+                contentid: Array.from(mergedContentIds),
             });
 
-            // Save the query to the database
             await newQuery.save();
-
-            //Step 7: Return results to client
+            console.log(`Saved new query to database`)
+            //Step 8: Return results to client
             console.log(`Response of ${contentList.length} results sent to client\n`)
             res.json(contentList);
 

@@ -1,7 +1,7 @@
 import praw
 from dotenv import dotenv_values
 from datetime import datetime
-from data_types import UnclassifiedContent, filter_by_date_range
+from data_types import UnclassifiedContent, filter_by_date_range, Source
 from typing import List
 from sentiment_logging import *
 class Post:
@@ -77,6 +77,7 @@ def posts_to_content(post_list: List[Post]) -> List[UnclassifiedContent]:
                 username ="N/A",
                 content_body= post.text,
                 date= datetime.fromtimestamp(post.date),
+                source= Source.REDDIT,
                 source_url='http://example.com'
             )
             unclassified_content_list.append(content_param)

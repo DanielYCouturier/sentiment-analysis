@@ -42,6 +42,7 @@ function createCards(jsonArray) {
                 <h4>${json.username}</h4>
                 <p><strong>Content:</strong> ${json.content_body}</p>
                 <p><strong>Date:</strong> ${json.date}</p>
+                <p>${json.source}</p>
                 <p><strong>Source URL:</strong> <a href="${json.source_url}" target="_blank">${json.source_url}</a></p>
                 <p><strong>Explicit:</strong> ${json.explicit}</p>
                 <p><strong>Sentiment:</strong> ${json.sentiment}</p>
