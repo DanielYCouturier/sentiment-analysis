@@ -4,7 +4,7 @@ from datetime import datetime
 import torch
 
 # Load the tokenizer and model once (global for reuse)
-model_path = './sentiment_model'
+model_path = './python/sentiment_model'
 tokenizer = BertTokenizer.from_pretrained(model_path)
 model = BertForSequenceClassification.from_pretrained(model_path)
 
