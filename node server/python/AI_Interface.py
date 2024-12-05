@@ -4,42 +4,55 @@ from datetime import datetime
 import torch
 
 # Load the tokenizer and model once (global for reuse)
-model_path = './python/sentiment_model'
-tokenizer = BertTokenizer.from_pretrained(model_path)
-model = BertForSequenceClassification.from_pretrained(model_path)
+local_model_path = './python/sentiment_model'
+tokenizer = BertTokenizer.from_pretrained(local_model_path)
+local_model = BertForSequenceClassification.from_pretrained(local_model_path)
 
 # Ensure the model is on the correct device (GPU or CPU)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
+local_model.to(device)
 
-def classify(content: UnclassifiedContent) -> ContentParameters:
+# Global variable for model selection
+MODEL_SELECTION = "LOCAL"  # Options: LOCAL, CHATGPT, GEMINI
 
-    # Predict sentiment
-    def predict_sentiment(text: str)-> Sentiment:
-        # Tokenize the input text
-        inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=128)
-        inputs = {key: value.to(device) for key, value in inputs.items()}  # Move inputs to device
+def classify_with_local_model(content_body: str) -> Sentiment:
+    """Classifies sentiment using the local AI model."""
+    inputs = tokenizer(content_body, return_tensors="pt", truncation=True, padding=True, max_length=128)
+    inputs = {key: value.to(device) for key, value in inputs.items()}  # Move inputs to device
 
-        # Perform inference
-        with torch.no_grad():
-            outputs = model(**inputs)
-            probs = torch.nn.functional.softmax(outputs.logits, dim=-1)
-            sentiment = torch.argmax(probs).item()
+    with torch.no_grad():
+        outputs = local_model(**inputs)
+        probs = torch.nn.functional.softmax(outputs.logits, dim=-1)
+        sentiment = torch.argmax(probs).item()
 
-        # Map sentiment labels to Sentiment enum
-        if (sentiment == 0):
-            return Sentiment.NEGATIVE
-        elif (sentiment == 1):
-            return Sentiment.POSITIVE
-        elif (sentiment == 2):
-            return Sentiment.NEUTRAL
-        else:
-            raise ValueError(f"Unexpected sentiment class: {sentiment}")
+    # Map sentiment labels to Sentiment enum
+    if sentiment == 0:
+        return Sentiment.NEGATIVE
+    elif sentiment == 1:
+        return Sentiment.POSITIVE
+    elif sentiment == 2:
+        return Sentiment.NEUTRAL
+    else:
+        raise ValueError(f"Unexpected sentiment class: {sentiment}")
 
-    # Predict the sentiment of the content body
-    predicted_sentiment = predict_sentiment(content.content_body)
+def classify_with_external_model(content_body: str, model_name: str) -> Sentiment:
+    """Stub for classifying sentiment with an external model (ChatGPT or Gemini)."""
+    # Replace this stub with actual API calls to ChatGPT or Gemini as needed
+    print(f"Using {model_name} model for sentiment analysis.")
+    return Sentiment.NEUTRAL  # Stub response
 
-    # Create and return the classified ContentParameters object
+def classify(content: UnclassifiedContent, model: str) -> ContentParameters:
+    """Classifies content using the selected AI model."""
+    global MODEL_SELECTION
+    MODEL_SELECTION = model.upper()  # Ensure proper case handling
+
+    if MODEL_SELECTION == "LOCAL":
+        predicted_sentiment = classify_with_local_model(content.content_body)
+    elif MODEL_SELECTION in ["CHATGPT", "GEMINI"]:
+        predicted_sentiment = classify_with_external_model(content.content_body, MODEL_SELECTION)
+    else:
+        raise ValueError(f"Unsupported model selection: {MODEL_SELECTION}")
+
     return ContentParameters(
         title=content.title,
         username=content.username,

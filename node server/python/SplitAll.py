@@ -3,39 +3,30 @@ from data_types import RequestParameters, Source, Sentiment, ContentParameters
 from datetime import datetime
 from BugzillaScraper import scrape_bugzilla
 from typing import List
-from AI_Interface import classify
+from AI_Interface import classify, MODEL_SELECTION
 from RedditScraper import scrape_reddit
 from sentiment_logging import log
-def split(request_paramaters: RequestParameters) -> ContentParameters:
-    """
-    Splits request parameters to scrape data from various sources and classify it.
-    Args:
-        request_parameters (RequestParameters): The parameters for querying different sources.
-    Returns:
-        List: A list of classified content based on the provided parameters.
-    """
-    output =[]
-    if(Source.BUGZILLA in request_paramaters.websites):
-        try:
-            log("Scraping Bugzilla")
-            output+=scrape_bugzilla(request_paramaters.query,request_paramaters.date_start,request_paramaters.date_end)
-        except Exception as e:
-            log("SplitAll.split failed to get data from bugzilla")
-            log(e)
-    if(Source.REDDIT in request_paramaters.websites):
-        try:
-            log("Scraping Reddit")
-            output+=scrape_reddit(request_paramaters.query, 3, request_paramaters.date_start, request_paramaters.date_end)
-        except Exception as e:
-            log("SplitAll.split failed to get data from reddit")
-            log(e)
-    return [classify(item) for item in output]
-if __name__=="__main__":
+
+def split(request_parameters: RequestParameters, model: str) -> List[ContentParameters]:
+    """Splits request parameters to scrape data from various sources and classify it."""
+    output = []
+    if Source.BUGZILLA in request_parameters.websites:
+        log("Scraping Bugzilla")
+        output += scrape_bugzilla(request_parameters.query, request_parameters.date_start, request_parameters.date_end)
+    if Source.REDDIT in request_parameters.websites:
+        log("Scraping Reddit")
+        output += scrape_reddit(request_parameters.query, 3, request_parameters.date_start, request_parameters.date_end)
+    return [classify(item, model) for item in output]
+
+if __name__ == "__main__":
+    MODEL_SELECTION = argv[1] if len(argv) > 1 else "LOCAL"  # Default to LOCAL if no argument is provided
+    log(f"Using model: {MODEL_SELECTION}")
+
     test_params = RequestParameters(
-        query=argv[1],
-        date_start=datetime(2024,1,1),
-        date_end=datetime(2025,1,1),
-        websites=[Source.REDDIT,Source.BUGZILLA],
+        query=argv[2] if len(argv) > 2 else "test",
+        date_start=datetime(2024, 1, 1),
+        date_end=datetime(2025, 1, 1),
+        websites=[Source.REDDIT, Source.BUGZILLA],
         sentiment=Sentiment.ALL
     )
     results = split(test_params)
