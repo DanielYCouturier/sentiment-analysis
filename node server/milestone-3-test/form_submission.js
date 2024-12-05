@@ -53,3 +53,18 @@ function createCards(jsonArray) {
         card_list.innerHTML += card;
     });
 }
+
+formData.forEach((value, key) => {
+    data[key] = value;
+});
+
+// Add the model selection to the data payload
+data["model"] = document.getElementById("model-selection").value;
+
+fetch('http://localhost:3000/getData', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+})
