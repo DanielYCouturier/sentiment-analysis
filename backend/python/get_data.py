@@ -2,7 +2,7 @@ from  datetime import datetime
 import json
 import sys
 from data_types import *
-from SplitAll import split
+from split_all import split
 from typing import List
 from sentiment_logging import *
 

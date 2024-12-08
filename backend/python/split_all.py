@@ -1,10 +1,10 @@
 from sys import argv
 from data_types import RequestParameters, Source, Sentiment, ContentParameters
 from datetime import datetime
-from BugzillaScraper import scrape_bugzilla
 from typing import List
-from AI_Interface import classify, MODEL_SELECTION
-from RedditScraper import scrape_reddit
+from ai_interface import classify, MODEL_SELECTION
+from reddit_scraper import scrape_reddit
+from bugzilla_scraper import scrape_bugzilla
 from sentiment_logging import log
 
 def split(request_parameters: RequestParameters, model: str) -> List[ContentParameters]:

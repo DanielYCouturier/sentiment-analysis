@@ -2,9 +2,9 @@
   "name": "sentiment-analysis-server",
   "version": "1.0.0",
   "description": "Backend server to provide sentiment classification data to user",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
