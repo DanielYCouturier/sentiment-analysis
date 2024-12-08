@@ -1,0 +1,24 @@
+.root {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 100vh;
+}
+
+.queryWrapper,
+.contentWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.queryWrapper {
+    flex: 1;
+    border-right: 2px solid #ccc;
+}
+
+.contentWrapper {
+    flex: 2;
+}

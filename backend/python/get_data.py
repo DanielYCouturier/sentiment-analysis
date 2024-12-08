@@ -45,7 +45,7 @@ def main(query:str, date_start:str, date_end:str, sources:str, sentiment:str):
         websites=website_list,
         sentiment=parse_sentiment(sentiment)
     )
-    content_list = split(request_params, model)
+    content_list = split(request_params, model= "LOCAL")
     global_return(content_list)
 
 if __name__ == "__main__":

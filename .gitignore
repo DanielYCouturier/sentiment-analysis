@@ -1,3 +1,5 @@
-/node server/node_modules/
-/node server/python/__pycache__
-/node server/python/.env
+# Recursively ignore all
+node_modules/
+.env
+__pycache__/
+
