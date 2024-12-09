@@ -1,5 +1,6 @@
 # Recursively ignore all
 node_modules/
 .env
+py-env
 __pycache__/
 model.safetensors
