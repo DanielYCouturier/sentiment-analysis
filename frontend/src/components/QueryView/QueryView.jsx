@@ -10,7 +10,7 @@ function QueryView() {
             data[key] = value;
         });
 
-        fetch('http://localhost:3000/getData', {
+        fetch('http://localhost:5000/getData', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

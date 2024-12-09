@@ -7,7 +7,7 @@ const Content = require('./mongo-db/content');
 const Query = require('./mongo-db/query');
 
 const app = express();
-const PORT = 3000;
+const PORT = 5000;
 
 app.use(cors()); // TODO THIS IS A SECURITY VULNERABILITY IF ON AWS I THINK IDRK, WILL FIX LATER
 app.use(bodyParser.json());
