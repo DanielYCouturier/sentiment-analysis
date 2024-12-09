@@ -1,6 +1,4 @@
-const mongoose = require('mongoose');
-
-const Content = require('./content');
+import mongoose from 'mongoose';
 
 const querySchema = new mongoose.Schema({
     keyword: { type: String, required: true },
@@ -13,4 +11,4 @@ const querySchema = new mongoose.Schema({
 
 querySchema.index({ keyword: 1, source: 1});
 
-module.exports = mongoose.model('Query', querySchema);
+export default mongoose.model('Query', querySchema);

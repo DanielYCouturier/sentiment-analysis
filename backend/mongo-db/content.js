@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const contentSchema = new mongoose.Schema({
     title: { type: String, required: true },
@@ -9,4 +9,4 @@ const contentSchema = new mongoose.Schema({
     source_url: { type: String, required: true }
 });
 
-module.exports = mongoose.model('Content', contentSchema);
+export default mongoose.model('Content', contentSchema);
