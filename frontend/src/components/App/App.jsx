@@ -1,21 +1,23 @@
-import ContentView from "../ContentView/ContentView"
-import QueryView from "../QueryView/QueryView"
-import { QueryResultProvider } from "../QueryResultContext"
-import styles from "./App.module.css"
+import ContentView from "../ContentView/ContentView";
+import QueryView from "../QueryView/QueryView";
+import { useAppContext } from "../AppContext";
+import styles from "./App.module.css";
+import GraphView from "../GraphView/GraphView";
+
 function App() {
+  const { viewState } = useAppContext();
 
   return (
-    <QueryResultProvider>
-      <div className={styles.root}>
-        <div className={styles.queryWrapper}>
-          <QueryView />
-        </div>
-        <div className={styles.contentWrapper}>
-          <ContentView />
-        </div>
+    <div className={styles.root}>
+      <div className={styles.queryWrapper}>
+        <QueryView />
       </div>
-    </QueryResultProvider>
-  )
+      <div className={styles.contentWrapper}>
+        {viewState === "CONTENT" && <ContentView />}
+        {viewState === "GRAPH" && <GraphView />}
+      </div>
+    </div>
+  );
 }
 
-export default App
+export default App;

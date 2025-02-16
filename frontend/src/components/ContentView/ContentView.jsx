@@ -1,16 +1,23 @@
 import React from 'react';
-import { useQueryResult } from '../QueryResultContext';
-import ContentCard from '../ContentCard/ContentCard'; 
-import styles from "./ContentView.module.css" 
+import { useAppContext } from '../AppContext';
+import ContentCard from '../ContentCard/ContentCard';
+import styles from "./ContentView.module.css"
 function ContentView() {
-    const { result } = useQueryResult();
+    const { queryResult, setViewState } = useAppContext();
+
+
+    const switchToGraph = () => {
+        setViewState("GRAPH")
+    }
 
     return (
         <div className={styles.contentContainer}>
+
+            <button onClick={switchToGraph}>View Graph</button>
             <h2>Content View</h2>
-            {result && Array.isArray(result) && result.length > 0 ? (
-                result.map((json, index) => (
-                    <ContentCard key={index} json={json} /> 
+            {queryResult && Array.isArray(queryResult) && queryResult.length > 0 ? (
+                queryResult.map((json, index) => (
+                    <ContentCard key={index} json={json} />
                 ))
             ) : (
                 <p>No data received yet.</p>
@@ -18,5 +25,6 @@ function ContentView() {
         </div>
     );
 }
+
 
 export default ContentView;
