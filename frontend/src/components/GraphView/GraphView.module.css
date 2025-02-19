@@ -1,0 +1,26 @@
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.canvas {
+    width: 70%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--trim-color);
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+.switchView {
+    width: 100px;
+}
+.detailsButton{
+    margin-bottom: 20px;
+}
