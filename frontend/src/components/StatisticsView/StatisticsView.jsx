@@ -11,15 +11,11 @@ function StatisticsView({ close }) {
     const dateRange = `${minDate.toLocaleDateString()} - ${maxDate.toLocaleDateString()}`;
 
     console.log(queryResult)
-    const positiveCount = queryResult.filter(obj => obj.sentiment === 'POSITIVE').length;
-    const negativeCount = queryResult.filter(obj => obj.sentiment === 'NEGATIVE').length;
-    const neutralCount = queryResult.filter(obj => obj.sentiment === 'NEUTRAL').length;
+    const positiveCount = queryResult.filter(obj => obj.sentiment === 1).length;
+    const negativeCount = queryResult.filter(obj => obj.sentiment === -1).length;
+    const neutralCount = queryResult.filter(obj => obj.sentiment === 0).length;
 
-    const sentimentValues = queryResult.map(obj => {
-        if (obj.sentiment === 'POSITIVE') return 1;
-        if (obj.sentiment === 'NEGATIVE') return -1;
-        return 0; // for neutral
-    });
+    const sentimentValues = queryResult.map(obj => obj.sentiment);
 
     const getVerboseSentiment = (val) => {
         const absVal = val < 0 ? val * -1 : val

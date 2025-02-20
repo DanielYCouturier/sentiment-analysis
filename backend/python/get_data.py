@@ -23,7 +23,7 @@ def global_return(content_list: List[ContentParameters]):
             "source": content.source.value,
             "source_url": content.source_url,
             "explicit": content.explicit,
-            "sentiment": content.sentiment.value
+            "sentiment": content.sentiment
         } 
         for content in content_list
     ]

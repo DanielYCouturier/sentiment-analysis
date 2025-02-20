@@ -78,7 +78,7 @@ def bug_to_content(bug_list: List[Bugzilla_Bug]) -> List[UnclassifiedContent]:
         try:
             content_param = UnclassifiedContent(
                 title="Bug ID: "+str(bug.bug_id),
-                username="N/A",
+                username="",
                 content_body=bug.short_desc, 
                 date=datetime.strptime(bug.changeddate, "%Y-%m-%d %H:%M:%S"),
                 source=Source.BUGZILLA,

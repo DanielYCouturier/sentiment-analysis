@@ -12,10 +12,16 @@ def split(request_parameters: RequestParameters, model: str) -> List[ContentPara
     output = []
     if Source.BUGZILLA in request_parameters.websites:
         log("Scraping Bugzilla")
-        output += scrape_bugzilla(request_parameters.query, request_parameters.date_start, request_parameters.date_end)
+        try:
+            output += scrape_bugzilla(request_parameters.query, request_parameters.date_start, request_parameters.date_end)
+        except:
+            log("Error Scraping Bugzilla")
     if Source.REDDIT in request_parameters.websites:
         log("Scraping Reddit")
-        output += scrape_reddit(request_parameters.query, 3, request_parameters.date_start, request_parameters.date_end)
+        try:
+            output += scrape_reddit(request_parameters.query, 3, request_parameters.date_start, request_parameters.date_end)
+        except:
+            log("Error Scraping Reddit")
     return [classify(item, model) for item in output]
 
 if __name__ == "__main__":

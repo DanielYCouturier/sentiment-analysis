@@ -27,11 +27,14 @@ def classify_with_local_model(content_body: str) -> Sentiment:
 
     # Map sentiment labels to Sentiment enum
     if sentiment == 0:
-        return Sentiment.NEGATIVE
+        # return Sentiment.NEGATIVE
+        return -1
     elif sentiment == 1:
-        return Sentiment.POSITIVE
+        # return Sentiment.POSITIVE
+        return 1
     elif sentiment == 2:
-        return Sentiment.NEUTRAL
+        # return Sentiment.NEUTRAL
+        return 0
     else:
         raise ValueError(f"Unexpected sentiment class: {sentiment}")
 
@@ -39,7 +42,7 @@ def classify_with_external_model(content_body: str, model_name: str) -> Sentimen
     """Stub for classifying sentiment with an external model (ChatGPT or Gemini)."""
     # Replace this stub with actual API calls to ChatGPT or Gemini as needed
     print(f"Using {model_name} model for sentiment analysis.")
-    return Sentiment.NEUTRAL  # Stub response
+    return 0  # Stub response
 
 def classify(content: UnclassifiedContent, model: str) -> ContentParameters:
     """Classifies content using the selected AI model."""
@@ -60,6 +63,6 @@ def classify(content: UnclassifiedContent, model: str) -> ContentParameters:
         date=content.date,
         source=content.source,
         source_url=content.source_url,
-        explicit=True,
+        explicit=False,
         sentiment=predicted_sentiment
     )

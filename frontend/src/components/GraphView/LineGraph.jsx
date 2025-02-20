@@ -89,16 +89,11 @@ function LineGraph() {
     return intervalItems.map(innerList => innerList.length);
   };
   const getAverageSentiment = (intervalItems) => {
-    const sentimentMap = {
-      "NEGATIVE": -1,
-      "NEUTRAL": 0,
-      "POSITIVE": 1
-    };
 
     return intervalItems.map(innerList => {
       if (innerList.length === 0) return 0;
 
-      const sum = innerList.reduce((acc, item) => acc + sentimentMap[item.sentiment], 0);
+      const sum = innerList.reduce((acc, item) => acc + item.sentiment, 0);
       return sum;
     });
   };

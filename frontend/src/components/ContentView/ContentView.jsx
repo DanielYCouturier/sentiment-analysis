@@ -4,12 +4,7 @@ import ContentCard from '../ContentCard/ContentCard';
 import styles from "./ContentView.module.css"
 function ContentView() {
     const { queryResult } = useAppContext();
-    const [sortConfig, setSortConfig] = useState({ key: "date", ascending: false });
-
-    const getSentimentValue = (sentiment) => {
-        const sentimentMap = { "NEGATIVE": -1, "NEUTRAL": 0, "POSITIVE": 1 };
-        return sentimentMap[sentiment] ?? 0;
-    };
+    const [sortConfig, setSortConfig] = useState({ key: "date", ascending: false })
 
     const sortedResults = () => {
         if (!queryResult || !Array.isArray(queryResult)) return [];
@@ -22,8 +17,8 @@ function ContentView() {
                 valueA = new Date(a.date);
                 valueB = new Date(b.date);
             } else if (sortConfig.key === "sentiment") {
-                valueA = getSentimentValue(a.sentiment);
-                valueB = getSentimentValue(b.sentiment);
+                valueA = a.sentiment;
+                valueB = b.sentiment;
             }
 
             if (valueA < valueB) return sortConfig.ascending ? -1 : 1;

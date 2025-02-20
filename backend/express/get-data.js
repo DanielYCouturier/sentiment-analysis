@@ -54,8 +54,8 @@ const getData = async (req, res) => {
             date: content.date.toISOString(),
             source: content.source,
             source_url: content.source_url,
-            explicit: "FALSE",
-            sentiment: "NEUTRAL"
+            explicit: content.explicit,
+            sentiment: content.sentiment
         }));
         console.log(`Response of ${content.length} results sent to client\n`)
         return res.json(content);
@@ -93,8 +93,10 @@ const getData = async (req, res) => {
                 username: item.username,
                 content_body: item.content_body,
                 date: new Date(item.date),
-                source: source,
-                source_url: item.source_url
+                source: item.source,
+                source_url: item.source_url,
+                sentiment: item.sentiment,
+                explicit: item.explicit
             })));
             console.log(`Inserted ${contentList.length} new results to database`)
             const contentIds = contentDocs.map(doc => doc._id);
