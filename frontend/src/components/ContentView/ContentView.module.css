@@ -1,3 +1,7 @@
 .contentContainer{
+    display: flex;
     overflow-y: auto;
+    width: 100%;
+    align-items: center;
+    flex-direction: column;
 }

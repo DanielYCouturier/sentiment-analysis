@@ -13,7 +13,7 @@ function ContentView() {
     return (
         <div className={styles.contentContainer}>
 
-            <button onClick={switchToGraph}>View Graph</button>
+            <button onClick={switchToGraph} className={styles.graphButton}>View Graph</button>
             <h2>Content View</h2>
             {queryResult && Array.isArray(queryResult) && queryResult.length > 0 ? (
                 queryResult.map((json, index) => (

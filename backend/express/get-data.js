@@ -2,10 +2,31 @@ import { spawn } from 'child_process';
 import Content from '../mongo-db/content.js';
 import Query from '../mongo-db/query.js';
 
+const getDefault = (key) => {
+    const defaults = {
+        dateStart: "1111-11-11",
+        dateEnd: "9999-09-09",
+        source: "ALL",
+        sentiment: "ALL",
+        model: "LOCAL"
+    };
+    return defaults[key];
+
+}
+
 const getData = async (req, res) => {
     // Step 1: Interpret the post req parameters
-    const { query, dateStart, dateEnd, source, sentiment } = req.body;
+    let { query, dateStart, dateEnd, source, sentiment } = req.body;
     console.log(`Received req from client: \n\tquery: ${query}\n\tdateStart: ${dateStart}\n\tdateEnd: ${dateEnd}\n\tsource: ${source}\n\tsentiment: ${sentiment}`)
+    if (!query) {
+        return res.json({});
+    }
+    dateStart = dateStart || getDefault("dateStart");
+    dateEnd = dateEnd || getDefault("dateEnd");
+    source = source || getDefault("source");
+    sentiment = sentiment || getDefault("sentiment");
+    
+    
     const dateStartObject = new Date(dateStart)
     const dateEndObject = new Date(dateEnd)
     // Step 2: Check if parameters are in database, or a superset is.
@@ -16,13 +37,13 @@ const getData = async (req, res) => {
             { source: "ALL" }
         ],
         datestart: { $lte: dateStartObject },
-        dateend: { $gte: dateEndObject},
+        dateend: { $gte: dateEndObject },
     }).populate('contentid');
     // Step 3: If query is already in database, return results that match from superset
     if (cachedQuery) {
-        const filteredContent = cachedQuery.contentid.filter(content => 
+        const filteredContent = cachedQuery.contentid.filter(content =>
             (source === "ALL" || content.source === source) &&
-            content.date >= dateStartObject && 
+            content.date >= dateStartObject &&
             content.date <= dateEndObject
         );
         console.log(`Found ${filteredContent.length} matching of ${cachedQuery.contentid.length} relavent results in database`)
@@ -67,20 +88,20 @@ const getData = async (req, res) => {
             const contentList = JSON.parse(pythonOutput.trim());
 
             // Step 5: Save content from python process in database
-            const contentDocs = await Content.insertMany(contentList.map(item => ({  
+            const contentDocs = await Content.insertMany(contentList.map(item => ({
                 title: item.title,
                 username: item.username,
                 content_body: item.content_body,
                 date: new Date(item.date),
-                source: source, 
+                source: source,
                 source_url: item.source_url
-            }))); 
+            })));
             console.log(`Inserted ${contentList.length} new results to database`)
             const contentIds = contentDocs.map(doc => doc._id);
             // Step 6: If new data is a supeset of any queries, merge them all into 1 new query 
             const subsetQueries = await Query.find({
                 keyword: query,
-                datestart: { $gte: dateStartObject},
+                datestart: { $gte: dateStartObject },
                 dateend: { $lte: dateEndObject },
                 ...(source !== "ALL" && { source: source }), // Add `source` condition only if it's not "ALL"
             });
@@ -96,7 +117,7 @@ const getData = async (req, res) => {
                 keyword: query,
                 source: source,
                 datestart: dateStartObject,
-                dateend: dateEndObject, 
+                dateend: dateEndObject,
                 requestcount: 10,
                 contentid: Array.from(mergedContentIds),
             });
