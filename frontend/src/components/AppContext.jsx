@@ -41,6 +41,7 @@ export const AppContextProvider = ({ children }) => {
             })
             .catch(error => {
                 console.error(error);
+                alert("Error reaching server, please try again later.")
             });
     };
     return (

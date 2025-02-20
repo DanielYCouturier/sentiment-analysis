@@ -1,5 +1,5 @@
 import styles from "./StatisticsView.module.css";
-import { useAppContext } from '../../AppContext';
+import { useAppContext } from '../AppContext';
 
 
 function StatisticsView({ close }) {

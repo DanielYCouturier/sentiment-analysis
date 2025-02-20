@@ -1,16 +1,14 @@
 import styles from './GraphView.module.css';
 import LineGraph from './LineGraph';
-import StatisticsView from './StatisticsView/StatisticsView';
+import StatisticsView from '../StatisticsView/StatisticsView';
 import { useAppContext } from '../AppContext';
 import React, { useState } from 'react';
 
 
 function GraphView() {
-  const { queryResult, setViewState } = useAppContext();
+  const { queryResult } = useAppContext();
   const [statisticsVisible, setStatisticsVisible] = useState(false)
-  const switchToContent = () => {
-    setViewState("CONTENT")
-  }
+
   const openStatistics = () => {
     setStatisticsVisible(true)
   }
@@ -20,8 +18,6 @@ function GraphView() {
 
   return (
     <div className={styles.container}>
-      <button onClick={switchToContent} className={styles.switchView}>View Content</button>
-      <h2>Graph View</h2>
       <div className={styles.canvas}>
         <LineGraph />
       </div>

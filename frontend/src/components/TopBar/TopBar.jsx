@@ -2,7 +2,7 @@ import styles from "./TopBar.module.css";
 import { useAppContext } from '../AppContext';
 
 function TopBar() {
-    const { query, setQuery } = useAppContext(); 
+    const { query, setQuery, viewState, setViewState } = useAppContext();
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
@@ -11,15 +11,30 @@ function TopBar() {
         setQuery(searchTerm);
     };
 
+    const handleViewStateChange = (e) => {
+        setViewState(e.target.value);
+    };
+
     return (
         <div className={styles.bar}>
+            <select
+                id="dropdown"
+                name="dropdown"
+                value={viewState}
+                onChange={handleViewStateChange}
+                className={styles.navDropdown}
+            >
+                <option value="CONTENT">Content View</option>
+                <option value="GRAPH">Graph View</option>
+            </select>
+
             <form onSubmit={handleSearchSubmit} className={styles.searchContainer}>
                 <input
                     type="text"
-                    name="searchTerm" 
+                    name="searchTerm"
                     placeholder="Search..."
                     className={styles.searchInput}
-                    defaultValue={query || ""} 
+                    defaultValue={query || ""}
                 />
                 <button
                     type="submit"

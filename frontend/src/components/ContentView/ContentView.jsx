@@ -1,27 +1,63 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAppContext } from '../AppContext';
 import ContentCard from '../ContentCard/ContentCard';
 import styles from "./ContentView.module.css"
 function ContentView() {
-    const { queryResult, setViewState } = useAppContext();
+    const { queryResult } = useAppContext();
+    const [sortConfig, setSortConfig] = useState({ key: "date", ascending: false });
 
+    const getSentimentValue = (sentiment) => {
+        const sentimentMap = { "NEGATIVE": -1, "NEUTRAL": 0, "POSITIVE": 1 };
+        return sentimentMap[sentiment] ?? 0;
+    };
 
-    const switchToGraph = () => {
-        setViewState("GRAPH")
-    }
+    const sortedResults = () => {
+        if (!queryResult || !Array.isArray(queryResult)) return [];
+
+        return [...queryResult].sort((a, b) => {
+            if (!sortConfig.key) return 0;
+
+            let valueA, valueB;
+            if (sortConfig.key === "date") {
+                valueA = new Date(a.date);
+                valueB = new Date(b.date);
+            } else if (sortConfig.key === "sentiment") {
+                valueA = getSentimentValue(a.sentiment);
+                valueB = getSentimentValue(b.sentiment);
+            }
+
+            if (valueA < valueB) return sortConfig.ascending ? -1 : 1;
+            if (valueA > valueB) return sortConfig.ascending ? 1 : -1;
+            return 0;
+        });
+    };
+    const toggleSort = (key) => {
+        setSortConfig(prev => ({
+            key,
+            ascending: prev.key === key ? !prev.ascending : false
+        }));
+    };
 
     return (
         <div className={styles.contentContainer}>
+            <div className={styles.sortByContainer}>
+                <button className={styles.sortButton} onClick={() => toggleSort("date")}>
+                    Date {sortConfig.key === "date" ? (sortConfig.ascending ? "▲" : "▼") : ""}
+                </button>
+                <button className={styles.sortButton} onClick={() => toggleSort("sentiment")}>
+                    Sentiment {sortConfig.key === "sentiment" ? (sortConfig.ascending ? "▲" : "▼") : ""}
+                </button>
+            </div>
 
-            <button onClick={switchToGraph} className={styles.graphButton}>View Graph</button>
-            <h2>Content View</h2>
-            {queryResult && Array.isArray(queryResult) && queryResult.length > 0 ? (
-                queryResult.map((json, index) => (
-                    <ContentCard key={index} json={json} />
-                ))
-            ) : (
-                <p>No data received yet.</p>
-            )}
+            <div className={styles.cardList}>
+                {sortedResults().length > 0 ? (
+                    sortedResults().map((json, index) => (
+                        <ContentCard key={index} json={json} />
+                    ))
+                ) : (
+                    <p>No data received yet.</p>
+                )}
+            </div>
         </div>
     );
 }
