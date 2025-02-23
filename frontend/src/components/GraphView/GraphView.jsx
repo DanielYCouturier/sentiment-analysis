@@ -21,14 +21,14 @@ function GraphView() {
       <div className={styles.canvas}>
         <LineGraph />
       </div>
-
       {queryResult &&
         (statisticsVisible
-          ? <StatisticsView close={closeStatistics} />
+          ? <div className={styles.statisticsContainer}>
+            <StatisticsView close={closeStatistics} />
+          </div>
           : <button onClick={openStatistics} className={styles.detailsButton}>View Details</button>
         )
       }
-
     </div>
   );
 }

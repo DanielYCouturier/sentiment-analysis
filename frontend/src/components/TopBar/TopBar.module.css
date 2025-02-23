@@ -1,5 +1,6 @@
 .bar {
     border-bottom: 1px solid var(--trim-color);
+    background-color: var(--background-color);
     width: 100%;
     height: 100%;
     display: flex;
@@ -61,7 +62,7 @@
 }
 
 .navDropdown:focus {
-    
+
     outline: none;
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
 }
