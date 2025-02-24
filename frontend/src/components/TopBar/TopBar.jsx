@@ -1,8 +1,20 @@
+import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./TopBar.module.css";
 import { useAppContext } from '../AppContext';
+import { useEffect } from "react";
 
 function TopBar() {
     const { query, setQuery, viewState, setViewState } = useAppContext();
+    const navigate = useNavigate();
+    const location = useLocation(); 
+
+    useEffect(() => {
+        if (location.pathname === "/home") {
+            setViewState("CONTENT");
+        } else if (location.pathname === "/trends") {
+            setViewState("GRAPH");
+        }
+    }, [location.pathname, setViewState]);
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
@@ -12,7 +24,14 @@ function TopBar() {
     };
 
     const handleViewStateChange = (e) => {
-        setViewState(e.target.value);
+        const newView = e.target.value;
+        setViewState(newView);
+
+        if (newView === 'CONTENT') {
+            navigate("/home");
+        } else if (newView === 'GRAPH') {
+            navigate("/trends");
+        }
     };
 
     return (
@@ -24,8 +43,8 @@ function TopBar() {
                 onChange={handleViewStateChange}
                 className={styles.navDropdown}
             >
-                <option value="CONTENT">Content View</option>
-                <option value="GRAPH">Graph View</option>
+                <option value="CONTENT">Home</option>
+                <option value="GRAPH">Trends</option>
             </select>
 
             <form onSubmit={handleSearchSubmit} className={styles.searchContainer}>

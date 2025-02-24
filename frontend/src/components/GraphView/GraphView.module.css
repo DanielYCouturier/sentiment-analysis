@@ -19,6 +19,7 @@
     border-radius: 20px;
     min-height: 0; 
     margin-bottom: 15px;
+    margin-top: 10px;
 
 }
 
@@ -29,6 +30,7 @@
 }
 .detailsButton {
     margin-bottom: 15px;
+    margin-top: 10px;
     padding: 10px;
     border-radius: 10px;
     background-color: #eee;
@@ -40,4 +42,19 @@
     background-color: #888;
     border-color: #b0b0b0; 
     cursor: pointer; 
+}
+
+.options{
+    margin: 5px;
+    margin-left: 20px;
+    margin-right: 20px;
+    display: inline-block;
+}
+.options select{
+    border-radius: 5px;
+    margin-left: 8px;
+    padding: 2px;
+}
+.options label{
+    font-size: 18px;
 }

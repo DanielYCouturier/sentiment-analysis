@@ -1,25 +1,29 @@
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import ContentView from "../ContentView/ContentView";
 import QueryView from "../QueryView/QueryView";
-import { useAppContext } from "../AppContext";
 import styles from "./App.module.css";
 import GraphView from "../GraphView/GraphView";
 import TopBar from "../TopBar/TopBar";
 
 function App() {
-  const { viewState } = useAppContext();
-
+  const location = useLocation();
   return (
     <div className={styles.root}>
       <div className={styles.topBar}>
-        <TopBar/>
+        <TopBar />
       </div>
       <div className={styles.body}>
-        <div className={styles.queryWrapper}>
-          <QueryView />
-        </div>
+        {location.pathname !== "/docs" && (
+          <div className={styles.queryWrapper}>
+            <QueryView />
+          </div>
+        )}
         <div className={styles.contentWrapper}>
-          {viewState === "CONTENT" && <ContentView />}
-          {viewState === "GRAPH" && <GraphView />}
+          <Routes >
+            <Route path="*" element={<Navigate to="/home" replace />} />
+            <Route path="/home" element={<ContentView />} />
+            <Route path="/trends" element={<GraphView />} />
+          </Routes>
         </div>
       </div>
     </div>
