@@ -4,3 +4,4 @@ node_modules/
 py-env
 __pycache__/
 model.safetensors
+dist

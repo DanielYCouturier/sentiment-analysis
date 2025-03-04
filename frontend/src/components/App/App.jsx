@@ -4,6 +4,7 @@ import QueryView from "../QueryView/QueryView";
 import styles from "./App.module.css";
 import GraphView from "../GraphView/GraphView";
 import TopBar from "../TopBar/TopBar";
+import DocView from '../DocView/DocView';
 
 function App() {
   const location = useLocation();
@@ -13,7 +14,7 @@ function App() {
         <TopBar />
       </div>
       <div className={styles.body}>
-        {location.pathname !== "/docs" && (
+        {location.pathname !== "/home" && (
           <div className={styles.queryWrapper}>
             <QueryView />
           </div>
@@ -21,7 +22,8 @@ function App() {
         <div className={styles.contentWrapper}>
           <Routes >
             <Route path="*" element={<Navigate to="/home" replace />} />
-            <Route path="/home" element={<ContentView />} />
+            <Route path="/home" element={<DocView/>} />
+            <Route path="/search" element={<ContentView />} />
             <Route path="/trends" element={<GraphView />} />
           </Routes>
         </div>

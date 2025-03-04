@@ -6,14 +6,17 @@ import { useEffect } from "react";
 function TopBar() {
     const { query, setQuery, viewState, setViewState } = useAppContext();
     const navigate = useNavigate();
-    const location = useLocation(); 
+    const location = useLocation();
 
     useEffect(() => {
-        if (location.pathname === "/home") {
+        if (location.pathname === "/search") {
             setViewState("CONTENT");
         } else if (location.pathname === "/trends") {
             setViewState("GRAPH");
+        } else if (location.pathname === "/home") {
+            setViewState("DOCS");
         }
+
     }, [location.pathname, setViewState]);
 
     const handleSearchSubmit = (e) => {
@@ -28,9 +31,11 @@ function TopBar() {
         setViewState(newView);
 
         if (newView === 'CONTENT') {
-            navigate("/home");
+            navigate("/search");
         } else if (newView === 'GRAPH') {
             navigate("/trends");
+        } else if (newView === 'DOCS') {
+            navigate("/home");
         }
     };
 
@@ -43,28 +48,33 @@ function TopBar() {
                 onChange={handleViewStateChange}
                 className={styles.navDropdown}
             >
-                <option value="CONTENT">Home</option>
+                <option value="DOCS">Home</option>
+                <option value="CONTENT">Search</option>
                 <option value="GRAPH">Trends</option>
             </select>
 
-            <form onSubmit={handleSearchSubmit} className={styles.searchContainer}>
-                <input
-                    type="text"
-                    name="searchTerm"
-                    placeholder="Search..."
-                    className={styles.searchInput}
-                    defaultValue={query || ""}
-                />
-                <button
-                    type="submit"
-                    className={styles.searchButton}
-                >
-                    <img
-                        src="https://www.freeiconspng.com/uploads/search-icon-png-21.png"
-                        alt="search"
-                    />
-                </button>
-            </form>
+            {
+                location.pathname === "/home"
+                    ? <h2>Sentiment Analysis for Software Feedback</h2>
+                    : <form onSubmit={handleSearchSubmit} className={styles.searchContainer}>
+                        <input
+                            type="text"
+                            name="searchTerm"
+                            placeholder="Search..."
+                            className={styles.searchInput}
+                            defaultValue={query || ""}
+                        />
+                        <button
+                            type="submit"
+                            className={styles.searchButton}
+                        >
+                            <img
+                                src="https://www.freeiconspng.com/uploads/search-icon-png-21.png"
+                                alt="search"
+                            />
+                        </button>
+                    </form>
+            }
         </div>
     );
 }

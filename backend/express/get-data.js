@@ -62,6 +62,7 @@ const getData = async (req, res) => {
     }
 
     console.log("Failed to find results in database")
+    console.log(`Spawning Data Collection Process: ${new Date()}`)
     //Step 4: Fallthrough; Spawn python process to scrape data
     const args = [query, dateStart, dateEnd, source, sentiment];
     const pythonProcess = spawn('python3', ['python/get_data.py', JSON.stringify(args)]);
@@ -127,7 +128,8 @@ const getData = async (req, res) => {
             await newQuery.save();
             console.log(`Saved new query to database`)
             //Step 8: Return results to client
-            console.log(`Response of ${contentList.length} results sent to client\n`)
+            console.log(`Response of ${contentList.length} results sent to client. ${new Date()}\n`)
+
             res.json(contentList);
 
 

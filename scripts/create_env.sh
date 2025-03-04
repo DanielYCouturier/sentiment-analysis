@@ -9,7 +9,7 @@ npm install
 cd python
 
 python3 -m venv "$ENV_NAME"
-source "$ENV_NAME/bin/activate"
+. "$ENV_NAME/bin/activate"
 
 pip install torch
 pip install transformers

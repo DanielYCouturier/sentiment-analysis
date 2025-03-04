@@ -1,0 +1,48 @@
+.docContainer {
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+
+
+
+    tr {
+        display: flex;
+    }
+
+    th,
+    td {
+        border: 1px solid #ccc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 0px 5px;
+    }
+
+    td {
+        flex: 1;
+        height: 40px;
+    }
+
+    th {
+        width: 200px;
+    }
+    a{
+        color: #0000EE
+    }
+    a:hover{
+        color: #551A8B
+    }
+}
+.horizontalContainer{
+    display: flex;
+    flex-direction: row;
+    div{
+        text-align: center;
+        margin: 20px;
+    }
+}
