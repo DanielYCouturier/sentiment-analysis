@@ -1,10 +1,8 @@
-from data_types import UnclassifiedContent, ContentParameters, Sentiment, Source
 from transformers import BertTokenizer, BertForSequenceClassification
-from datetime import datetime
 import torch
 
 # Load the tokenizer and model once (global for reuse)
-local_model_path = './python/sentiment_model'
+local_model_path = './classify/sentiment_model'
 tokenizer = BertTokenizer.from_pretrained(local_model_path)
 local_model = BertForSequenceClassification.from_pretrained(local_model_path)
 
@@ -15,7 +13,7 @@ local_model.to(device)
 # Global variable for model selection
 MODEL_SELECTION = "LOCAL"  # Options: LOCAL, CHATGPT, GEMINI
 
-def classify_with_local_model(content_body: str) -> Sentiment:
+def classify_with_local_model(content_body: str):
     """Classifies sentiment using the local AI model."""
     inputs = tokenizer(content_body, return_tensors="pt", truncation=True, padding=True, max_length=128)
     inputs = {key: value.to(device) for key, value in inputs.items()}  # Move inputs to device
@@ -38,13 +36,13 @@ def classify_with_local_model(content_body: str) -> Sentiment:
     else:
         raise ValueError(f"Unexpected sentiment class: {sentiment}")
 
-def classify_with_external_model(content_body: str, model_name: str) -> Sentiment:
+def classify_with_external_model(content_body: str, model_name: str):
     """Stub for classifying sentiment with an external model (ChatGPT or Gemini)."""
     # Replace this stub with actual API calls to ChatGPT or Gemini as needed
     print(f"Using {model_name} model for sentiment analysis.")
     return 0  # Stub response
 
-def classify(content: UnclassifiedContent, model: str) -> ContentParameters:
+def classify(content, model: str):
     """Classifies content using the selected AI model."""
     global MODEL_SELECTION
     MODEL_SELECTION = model.upper()  # Ensure proper case handling
@@ -56,13 +54,4 @@ def classify(content: UnclassifiedContent, model: str) -> ContentParameters:
     else:
         raise ValueError(f"Unsupported model selection: {MODEL_SELECTION}")
 
-    return ContentParameters(
-        title=content.title,
-        username=content.username,
-        content_body=content.content_body,
-        date=content.date,
-        source=content.source,
-        source_url=content.source_url,
-        explicit=False,
-        sentiment=predicted_sentiment
-    )
+    return predicted_sentiment

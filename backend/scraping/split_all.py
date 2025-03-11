@@ -1,32 +1,30 @@
 from sys import argv
-from data_types import RequestParameters, Source, Sentiment, ContentParameters
+from scraping.data_types import RequestParameters, Source, Sentiment, UnclassifiedContent
 from datetime import datetime
 from typing import List
-from ai_interface import classify, MODEL_SELECTION
-from reddit_scraper import scrape_reddit
-from bugzilla_scraper import scrape_bugzilla
-from sentiment_logging import log
+from scraping.reddit_scraper import scrape_reddit
+from scraping.bugzilla_scraper import scrape_bugzilla
 
-def split(request_parameters: RequestParameters, model: str) -> List[ContentParameters]:
+def split(request_parameters: RequestParameters, model: str) -> List[UnclassifiedContent]:
     """Splits request parameters to scrape data from various sources and classify it."""
     output = []
     if Source.BUGZILLA in request_parameters.websites:
-        log("Scraping Bugzilla")
+        print("Scraping Bugzilla")
         try:
             output += scrape_bugzilla(request_parameters.query, request_parameters.date_start, request_parameters.date_end)
-        except:
-            log("Error Scraping Bugzilla")
+        except Exception as error:
+            print("Error Scraping Bugzilla"+str(error))
     if Source.REDDIT in request_parameters.websites:
-        log("Scraping Reddit")
+        print("Scraping Reddit")
         try:
             output += scrape_reddit(request_parameters.query, 3, request_parameters.date_start, request_parameters.date_end)
-        except:
-            log("Error Scraping Reddit")
-    return [classify(item, model) for item in output]
+        except Exception as error:
+            print("Error Scraping Reddit"+str(error))
+    return output
 
 if __name__ == "__main__":
     MODEL_SELECTION = argv[1] if len(argv) > 1 else "LOCAL"  # Default to LOCAL if no argument is provided
-    log(f"Using model: {MODEL_SELECTION}")
+    print(f"Using model: {MODEL_SELECTION}")
 
     test_params = RequestParameters(
         query=argv[2] if len(argv) > 2 else "test",

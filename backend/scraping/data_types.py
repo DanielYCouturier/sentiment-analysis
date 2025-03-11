@@ -25,16 +25,6 @@ def parse_source(source_str: str) -> Source:
     except KeyError:
         raise ValueError(f"Invalid source: {source_str}")
 @dataclass
-class ContentParameters:
-    title: str
-    username: str
-    content_body: str
-    date: datetime
-    source: Source
-    source_url: str
-    explicit: bool
-    sentiment: Sentiment
-@dataclass
 class UnclassifiedContent:
     title: str
     username: str

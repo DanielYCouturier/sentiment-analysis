@@ -3,9 +3,8 @@ import pandas as pd
 from io import StringIO
 from sys import argv
 from typing import List
-from data_types import UnclassifiedContent, filter_by_date_range, Source
+from scraping.data_types import UnclassifiedContent, filter_by_date_range, Source
 from datetime import datetime
-from sentiment_logging import log
 # Define a class to hold bug details
 class Bugzilla_Bug:
     def __init__(self, bug_id, bug_type, short_desc, product, component, assigned_to, bug_status, resolution, changeddate):
@@ -63,7 +62,7 @@ def parse_csv(data_frame: pd.DataFrame) -> List[Bugzilla_Bug]:
                 )
             bugs.append(bug)
         except Exception as e:
-            log("BugzillaScraper.parse_csv failed to parse row: "+ str(row))
+            print("BugzillaScraper.parse_csv failed to parse row: "+ str(row))
     return bugs
 
 def bug_to_content(bug_list: List[Bugzilla_Bug]) -> List[UnclassifiedContent]:
@@ -82,11 +81,11 @@ def bug_to_content(bug_list: List[Bugzilla_Bug]) -> List[UnclassifiedContent]:
                 content_body=bug.short_desc, 
                 date=datetime.strptime(bug.changeddate, "%Y-%m-%d %H:%M:%S"),
                 source=Source.BUGZILLA,
-                source_url='http://example.com',
+                source_url=f'https://bugzilla-dev.allizom.org/show_bug.cgi?id={bug.bug_id}',
             )
             unclassified_content_list.append(content_param)
         except Exception:
-            log("BugzillaScraper.parse_csv failed to parse bug: "+ str(bug))
+            print("BugzillaScraper.parse_csv failed to parse bug: "+ str(bug))
     return unclassified_content_list
 
 

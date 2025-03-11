@@ -1,9 +1,8 @@
 import praw
 from dotenv import dotenv_values
 from datetime import datetime
-from data_types import UnclassifiedContent, filter_by_date_range, Source
+from scraping.data_types import UnclassifiedContent, filter_by_date_range, Source
 from typing import List
-from sentiment_logging import *
 class Post:
     """
     A data class representing individual reddit posts
@@ -26,9 +25,9 @@ def initilize_reddit() -> praw.Reddit:
     """
     env_vars = dotenv_values(".env")
 
-    client_id = "REDACTED"
-    client_secret = "REDACTED"
-    user_agent = "REDACTED"
+    client_id = "vJoCKtyNqzzIcP1jdNDTdw"
+    client_secret = "BkCeFyKOpezI_riznB20PLimMXGE7w"
+    user_agent = "Sentiment analysis (u/Live-Watercress7212)"
 
     reddit = praw.Reddit(
         client_id = client_id,
@@ -78,11 +77,11 @@ def posts_to_content(post_list: List[Post]) -> List[UnclassifiedContent]:
                 content_body= post.text,
                 date= datetime.fromtimestamp(post.date),
                 source= Source.REDDIT,
-                source_url='http://example.com'
+                source_url=post.url
             )
             unclassified_content_list.append(content_param)
         except Exception:
-            log("RedditScraper.posts_to_content failed to parse post: "+str(post))
+            print("RedditScraper.posts_to_content failed to parse post: "+str(post))
     return unclassified_content_list
 
 def scrape_reddit(search_term : str, parameter_limit: int, date_start: datetime, date_end: datetime) -> List[UnclassifiedContent]:

@@ -1,21 +1,12 @@
-ENV_NAME="py-env"
-
-cd ../frontend
-npm install
-
 cd ../backend
-npm install
-
-cd python
-
-python3 -m venv "$ENV_NAME"
-. "$ENV_NAME/bin/activate"
-
-pip install torch
+python3 -m venv py-env
+. py-env/bin/activate
+pip install flask
+pip install flask_cors
+pip install mongoengine
 pip install transformers
-pip install pandas
-pip install requests
+pip install torch
 pip install praw
-pip install python-dotenv
-
-deactivate
+pip install dotenv
+pip install pandas
+pip install ray
