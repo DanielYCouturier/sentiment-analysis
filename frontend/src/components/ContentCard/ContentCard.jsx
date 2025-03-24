@@ -34,7 +34,7 @@ function ContentCard({ json }) {
                 month: "long",
                 day: "numeric",
             })}</p>
-            <p>Sentiment: {getVerboseSentiment(json.sentiment)} ({json.sentiment})</p>
+            <p>Sentiment: {getVerboseSentiment(json.sentiment)} ({json.sentiment ?? "Loading..."})</p>
             <p><a href={json.source_url} target="_blank" rel="noopener noreferrer">{json.source_url}</a></p>
         </div>
     );

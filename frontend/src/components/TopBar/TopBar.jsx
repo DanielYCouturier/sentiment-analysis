@@ -2,9 +2,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./TopBar.module.css";
 import { useAppContext } from '../AppContext';
 import { useEffect } from "react";
-
 function TopBar() {
-    const { query, setQuery, viewState, setViewState } = useAppContext();
+    const { query, setQuery, viewState, setViewState, fetchData } = useAppContext();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -24,6 +23,9 @@ function TopBar() {
         const formData = new FormData(e.target);
         const searchTerm = formData.get('searchTerm');
         setQuery(searchTerm);
+        if(searchTerm==query){
+            fetchData()
+        }
     };
 
     const handleViewStateChange = (e) => {

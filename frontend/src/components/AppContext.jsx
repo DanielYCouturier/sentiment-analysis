@@ -13,6 +13,17 @@ export const AppContextProvider = ({ children }) => {
             fetchData();
         }
     }, [query, queryParams]);
+    useEffect(() => {
+        if (queryResult) {
+            const urls = queryResult
+                .filter(obj => obj.sentiment === undefined)
+                .map(obj => obj.source_url);
+            const batch = urls.slice(0, 10)
+            if (batch.length > 0) {
+                fetchSentiments(batch)
+            }
+        }
+    }, [queryResult])
     const fetchData = () => {
         console.log("Fetching data with params:")
         console.log("Query: " + query)
@@ -20,7 +31,7 @@ export const AppContextProvider = ({ children }) => {
 
         const requestBody = {
             ...queryParams,
-            query: query 
+            query: query
         };
         fetch('http://localhost:5000/getData', {
             method: 'POST',
@@ -37,6 +48,7 @@ export const AppContextProvider = ({ children }) => {
             })
             .then(result => {
                 console.log('Received JSON from server:', result);
+                result.sort((a, b) => new Date(b.date) - new Date(a.date));
                 setQueryResult(result);
             })
             .catch(error => {
@@ -44,8 +56,37 @@ export const AppContextProvider = ({ children }) => {
                 alert("Error reaching server, please try again later.")
             });
     };
+    const fetchSentiments = async (urls) => {
+        try {
+            const response = await fetch('http://localhost:5000/classifyData', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ urls: urls })
+            });
+            if (!response.ok) {
+                throw new Error("Invalid POST request");
+            }
+            const sentimentData = await response.json();
+            console.log('Received sentiment data:', sentimentData);
+
+            setQueryResult(prevResult =>
+                prevResult.map(obj =>
+                    sentimentData[obj.source_url] !== undefined
+                        ? { ...obj, sentiment: sentimentData[obj.source_url] }
+                        : obj
+                )
+            );
+        } catch (error) {
+            console.error(error);
+        };
+
+
+    };
+
     return (
-        <AppContext.Provider value={{ queryResult, queryParams, setQueryParams, viewState, setViewState, query, setQuery }}>
+        <AppContext.Provider value={{ queryResult, queryParams, setQueryParams, viewState, setViewState, query, setQuery, fetchData }}>
             {children}
         </AppContext.Provider>
     );

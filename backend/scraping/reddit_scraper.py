@@ -25,9 +25,9 @@ def initilize_reddit() -> praw.Reddit:
     """
     env_vars = dotenv_values(".env")
 
-    client_id = "vJoCKtyNqzzIcP1jdNDTdw"
-    client_secret = "BkCeFyKOpezI_riznB20PLimMXGE7w"
-    user_agent = "Sentiment analysis (u/Live-Watercress7212)"
+    client_id = "REDACTED"
+    client_secret = "REDACTED"
+    user_agent = "REDACTED"
 
     reddit = praw.Reddit(
         client_id = client_id,

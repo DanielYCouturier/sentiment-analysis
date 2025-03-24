@@ -9,4 +9,3 @@ pip install torch
 pip install praw
 pip install dotenv
 pip install pandas
-pip install ray

@@ -36,21 +36,21 @@ def classify_with_local_model(content_body: str):
     else:
         raise ValueError(f"Unexpected sentiment class: {sentiment}")
 
-def classify_with_external_model(content_body: str, model_name: str):
+def classify_with_external_model(content: str, model_name: str):
     """Stub for classifying sentiment with an external model (ChatGPT or Gemini)."""
     # Replace this stub with actual API calls to ChatGPT or Gemini as needed
     print(f"Using {model_name} model for sentiment analysis.")
     return 0  # Stub response
 
-def classify(content, model: str):
+def classify(content, model: str = "LOCAL"):
     """Classifies content using the selected AI model."""
     global MODEL_SELECTION
     MODEL_SELECTION = model.upper()  # Ensure proper case handling
 
     if MODEL_SELECTION == "LOCAL":
-        predicted_sentiment = classify_with_local_model(content.content_body)
+        predicted_sentiment = classify_with_local_model(content)
     elif MODEL_SELECTION in ["CHATGPT", "GEMINI"]:
-        predicted_sentiment = classify_with_external_model(content.content_body, MODEL_SELECTION)
+        predicted_sentiment = classify_with_external_model(content, MODEL_SELECTION)
     else:
         raise ValueError(f"Unsupported model selection: {MODEL_SELECTION}")
 
