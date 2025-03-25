@@ -4,8 +4,9 @@ from schemas.content_schema import Content
 from schemas.query_schema import Query
 from scraping.scrape_data import scrape_data
 def get_default(key):
+    current_year = datetime.now().year
     defaults = {
-        "dateStart": "1111-11-11",
+        "dateStart": f"{current_year}-01-01",
         "dateEnd": "9999-09-09",
         "source": "ALL",
         "sentiment": "ALL",
@@ -44,7 +45,7 @@ def get_data():
         filtered_content = [c for c in cached_query.contentid
                             if (source == "ALL" or c.source == source) and
                             date_start <= c.date <= date_end]
-        print(f"Found ${len(filtered_content)} matching of {len(cached_query)} relavent results in database")
+        print(f"Found {len(filtered_content)} matching of {len(cached_query.contentid)} relavent results in database")
         return jsonify([{
             "title": c.title,
             "username": c.username,

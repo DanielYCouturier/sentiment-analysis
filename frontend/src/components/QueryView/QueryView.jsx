@@ -13,12 +13,15 @@ function QueryView() {
         setQueryParams(data)
     };
 
+    const currentYear = new Date().getFullYear();
+    const defaultDate = `${currentYear}-01-01`;
+
     return (
         <form className={styles.container} onSubmit={submitForm}>
             <h2 className={styles.title}>Filters & Settings</h2>
             <div>
                 <label className={styles.label} htmlFor="date-start">Date Start</label>
-                <input className={styles.input} type="date" id="date-start" name="dateStart" />
+                <input className={styles.input} type="date" id="date-start" name="dateStart" defaultValue={defaultDate} />
             </div>
             <div>
                 <label className={styles.label} htmlFor="date-end">Date End</label>

@@ -20,7 +20,7 @@ def scrape_data(query:str, date_start:str, date_end:str, sources:str, sentiment:
     source = parse_source(sources)
     website_list = []
     if(source == Source.ALL):
-        website_list = [Source.REDDIT,Source.BUGZILLA]
+        website_list = [Source.REDDIT,Source.BUGZILLA, Source.GITHUB]
     else:
         website_list = [source]
     request_params = RequestParameters(
@@ -30,5 +30,5 @@ def scrape_data(query:str, date_start:str, date_end:str, sources:str, sentiment:
         websites=website_list,
         sentiment=parse_sentiment(sentiment)
     )
-    content_list = split(request_params, model= "LOCAL")
+    content_list = split(request_params)
     return format_data(content_list)

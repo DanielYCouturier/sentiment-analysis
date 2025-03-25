@@ -11,6 +11,7 @@ class Sentiment(Enum):
 class Source(Enum):
     REDDIT = "REDDIT"
     BUGZILLA= "BUGZILLA"
+    GITHUB= "GITHUB"
     ALL = "ALL"
 
 def parse_sentiment(sentiment_str: str) -> Sentiment:

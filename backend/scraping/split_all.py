@@ -4,8 +4,8 @@ from datetime import datetime
 from typing import List
 from scraping.reddit_scraper import scrape_reddit
 from scraping.bugzilla_scraper import scrape_bugzilla
-
-def split(request_parameters: RequestParameters, model: str) -> List[UnclassifiedContent]:
+from scraping.github_api import scrape_github
+def split(request_parameters: RequestParameters) -> List[UnclassifiedContent]:
     """Splits request parameters to scrape data from various sources and classify it."""
     output = []
     if Source.BUGZILLA in request_parameters.websites:
@@ -20,6 +20,15 @@ def split(request_parameters: RequestParameters, model: str) -> List[Unclassifie
             output += scrape_reddit(request_parameters.query, 3, request_parameters.date_start, request_parameters.date_end)
         except Exception as error:
             print("Error Scraping Reddit"+str(error))
+    if Source.GITHUB in request_parameters.websites:
+        print("Scraping Github")
+        try:
+            output += scrape_github(request_parameters.query, request_parameters.date_start, request_parameters.date_end)
+        except Exception as error:
+            print("Error Scraping Github"+str(error))
+
+
+
     return output
 
 if __name__ == "__main__":
