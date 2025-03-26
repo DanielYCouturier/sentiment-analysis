@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../AppContext';
 import ContentCard from '../ContentCard/ContentCard';
-import styles from "./ContentView.module.css"
+import styles from "./ContentView.module.css";
+
+const ITEMS_PER_PAGE = 10;
+
 function ContentView() {
     const { queryResult } = useAppContext();
-    const [sortConfig, setSortConfig] = useState({ key: "date", ascending: false })
+    const [sortConfig, setSortConfig] = useState({ key: "date", ascending: false });
+    const [currentPage, setCurrentPage] = useState(1);
 
     const sortedResults = () => {
         if (!queryResult || !Array.isArray(queryResult)) return [];
@@ -26,11 +30,24 @@ function ContentView() {
             return 0;
         });
     };
+
+    const paginatedResults = () => {
+        const sorted = sortedResults();
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+        return sorted.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    };
+
+    const totalPages = Math.ceil((queryResult?.length || 0) / ITEMS_PER_PAGE);
+
     const toggleSort = (key) => {
         setSortConfig(prev => ({
             key,
             ascending: prev.key === key ? !prev.ascending : false
         }));
+    };
+
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
     };
 
     return (
@@ -45,17 +62,36 @@ function ContentView() {
             </div>
 
             <div className={styles.cardList}>
-                {sortedResults().length > 0 ? (
-                    sortedResults().map((json, index) => (
+                {paginatedResults().length > 0 ? (
+                    paginatedResults().map((json, index) => (
                         <ContentCard key={index} json={json} />
                     ))
                 ) : (
                     <p>No data received yet.</p>
                 )}
             </div>
+
+            {totalPages > 1 && (
+                <div className={styles.paginationContainer}>
+                    <button 
+                        className={styles.pageButton} 
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                    >
+                        Previous
+                    </button>
+                    <span>Page {currentPage} of {totalPages}</span>
+                    <button 
+                        className={styles.pageButton} 
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
-
 
 export default ContentView;

@@ -14,7 +14,11 @@ function DLink({ id }) {
         "2-1-1": "https://docs.google.com/document/d/e/2PACX-1vRtC_59RrJpHiglbuV3Sqar_Z1AWGzeRCfmg22tipFQPpOeO77ZULzPoKYFA3HN-8EbMHY_U3ZPwpu2/pub?embedded=true",
         "2-1-2": "https://docs.google.com/presentation/d/e/2PACX-1vRB7y-wxrzfc_zhkoEFEl6bO7dcGxNlvw2u7W05ZUJ1yzj8heUnknXASLY0xMx-u9cZlWrX5aF7s-3S/embed?start=false&loop=false&delayms=3000",
         "2-2-1": "https://docs.google.com/presentation/d/e/2PACX-1vQlAHbIBWOa_FCqSNd9ufRk_9L8AxAxD6MU8RC1z3-qmdlUmpq_V6SJH8N6GJUQKpoJL5Nj1O52Fuko/embed?start=false&loop=false&delayms=3000",
-        "2-2-2": "https://docs.google.com/document/d/e/2PACX-1vSc9g0pQjUNFrjPxb0OF7jE2q5JRXaVELbGIp8s0JgoCzp4ksZ-2NrDpOpYtAXQYl_1HShAF3YTIPTY/pub?embedded=true"
+        "2-2-2": "https://docs.google.com/document/d/e/2PACX-1vSc9g0pQjUNFrjPxb0OF7jE2q5JRXaVELbGIp8s0JgoCzp4ksZ-2NrDpOpYtAXQYl_1HShAF3YTIPTY/pub?embedded=true",
+        "2-3-1": "https://docs.google.com/document/d/e/2PACX-1vTwOiURAGmQ4Az6s2MJ3kLqWkmmnG46CzQlL9GOhK7AYCSjGiypgx33qvgP_pWrHz8ZVjgL9eYugn7c/pub?embedded=true",
+        "2-3-2": "https://docs.google.com/presentation/d/e/2PACX-1vS9qIprXR87s_bUJb3T0g_5j_lCrUCKv2YH0yNI61c0RZRUwJxw5Gwc9pLKf6g6RYBN0l9mfTahuA9P/embed?start=false&loop=false&delayms=3000",
+        "2-3-3": "https://docs.google.com/document/d/e/2PACX-1vRGBiUINIWkXsD0DbWbsSPi-2rpre-pI6YyrOlE3z7ySVEKji4LC2HF6w6XxF6JeuTPMRxm4Etl4PFU/pub?embedded=true",
+
     };
     const textMap = {
         "1-1-1": "Plan",
