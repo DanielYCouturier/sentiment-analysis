@@ -1,0 +1,35 @@
+.root{
+    width: 100%;
+    height: 100%;
+}
+.body{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+    padding-top: 100px;
+}
+.topBar{
+    position: fixed;
+    height: 100px;
+    width: 100%;
+    z-index: 9999
+}
+.queryWrapper,
+.contentWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.queryWrapper {
+    flex: 1;
+    border-right: 2px solid var(--trim-color);
+}
+
+.contentWrapper {
+    flex: 6;
+}
