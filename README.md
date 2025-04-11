@@ -7,13 +7,19 @@ Install Dependencies:
 4. sudo apt install nodejs
 5. sudo apt install npm
 6. sudo apt install python3 (if not already)
+7. sudo apt install python3.10-venv
 
 Steps to setup dev environment 
-1. run /scripts/create_env.sh
-2. wait a long time
-3. copy model file from https://drive.google.com/file/d/1W6NMfj0IK4477x-6QSKY9ApWTMGBMJwg/view?usp=sharing to /backend/python/sentiment_model
+1. cd /scripts
+2. chmod +x create_env.sh
+3. ./create_env.sh 
+4. wait a long time
+5. copy model file from https://drive.google.com/file/d/1W6NMfj0IK4477x-6QSKY9ApWTMGBMJwg/view?usp=sharing to /backend/classify/sentiment_model
 
 Steps to run:
-1. run /scripts/run_backend.sh
-2. run /scripts/run_frontend.sh (different terminal)
-3. open http://localhost:3000/
+1. cd /scripts
+2. chmod +x run_backend.sh
+3. chmod +x run_frontend.sh
+4. ./run_backend.sh
+5. ./run_frontend.sh (different terminal)
+6. open http://localhost:3000/
