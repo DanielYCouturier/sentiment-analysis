@@ -37,7 +37,7 @@ def initilize_reddit() -> praw.Reddit:
     
     return reddit
 
-def get_posts(company: str,parameters_limit:int = 10) -> List[Post]:
+def get_posts(company: str,parameters_limit:int = 100) -> List[Post]:
     """
     Success: 
         Returns all posts from reddit matching search_term
@@ -47,7 +47,7 @@ def get_posts(company: str,parameters_limit:int = 10) -> List[Post]:
     posts = [] 
     reddit = initilize_reddit()
     subreddit = reddit.subreddit(company)
-    for submission in subreddit.new(limit=parameters_limit):
+    for submission in subreddit.search(company, limit=parameters_limit, sort='top', time_filter='all'):
         if not submission.stickied and submission.is_self:
             normalized_title = submission.title.lower()
             if company in normalized_title:
@@ -99,10 +99,4 @@ def scrape_reddit(search_term : str, parameter_limit: int, date_start: datetime,
     unclassified_content = posts_to_content(posts)
     unclassified_content = filter_by_date_range(unclassified_content,date_start,date_end)
     return unclassified_content
-
-# Example usage of the class
-if __name__ == "__main__":
-    parameter_limit = 1
-    posts = scrape_reddit("microsoft",parameter_limit, datetime(2023,1,1), datetime(2024,1,1))
-    for post in posts:
-        print(post)
+    

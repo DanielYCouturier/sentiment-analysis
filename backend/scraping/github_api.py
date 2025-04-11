@@ -38,53 +38,66 @@ def get_data_frame(repo_full_name: str, date_start: datetime, date_end: datetime
     url = f"{GITHUB_API}/repos/{repo_full_name}/issues"
     params = {
         "labels": "bug",
-        "per_page": 100,  # Maximum allowed per page
+        "per_page": 100,
         "state": "all",
         "since": date_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
+    headers = {
+        "Accept": "application/vnd.github.v3+json"
+    }
+    
     all_issues = []
     page = 1
 
-    while True:  # Ensure at least 10 issues
+    while True:
         params["page"] = page
-        response = requests.get(url, params=params)
+        try:
+            response = requests.get(url, params=params, headers=headers)
 
-        if response.status_code != 200:
-            raise Exception(f"Failed to retrieve GitHub issues. Status Code: {response.status_code}")
+            if response.status_code != 200:
+                print(f"Warning: Failed to retrieve page {page} (status code {response.status_code}). Skipping.")
+                page += 1
+                continue
 
-        issues = response.json()
-        if not issues:
-            break  # Stop if no more issues are returned
+            issues = response.json()
+            if not issues:
+                break
 
-        # Filter issues within the desired date range
-        print(issues[0]["created_at"])
-        last_issue_date = datetime.strptime(issues[-1]["created_at"], "%Y-%m-%dT%H:%M:%SZ")
-        if last_issue_date > date_end:
+            # Log the first issue's created_at for debug
+            print(f"[Page {page}] First issue created at: {issues[0]['created_at']}")
+
+            # Filter issues within the desired date range
+            filtered_issues = [
+                {
+                    "issue_id": issue["id"],
+                    "title": issue["title"],
+                    "body": issue.get("body", "No description"),
+                    "repository": repo_full_name,
+                    "assigned_to": issue["assignee"]["login"] if issue["assignee"] else "Unassigned",
+                    "status": issue["state"],
+                    "created_at": issue["created_at"],
+                    "url": issue["html_url"],
+                }
+                for issue in issues
+                if date_start <= datetime.strptime(issue["created_at"], "%Y-%m-%dT%H:%M:%SZ") <= date_end
+            ]
+
+            all_issues.extend(filtered_issues)
+
+            # Stop if all issues on this page are before the date range
+            last_issue_date = datetime.strptime(issues[-1]["created_at"], "%Y-%m-%dT%H:%M:%SZ")
+            if last_issue_date < date_start:
+                break
+
             page += 1
-            continue  # Skip this entire page
 
-        first_issue_date = datetime.strptime(issues[0]["created_at"], "%Y-%m-%dT%H:%M:%SZ")
-        if first_issue_date < date_start:
-            break
-        filtered_issues = [
-            {
-                "issue_id": issue["id"],
-                "title": issue["title"],
-                "body": issue.get("body", "No description"),
-                "repository": repo_full_name,
-                "assigned_to": issue["assignee"]["login"] if issue["assignee"] else "Unassigned",
-                "status": issue["state"],
-                "created_at": issue["created_at"],
-                "url": issue["html_url"],
-            }
-            for issue in issues
-            if date_start <= datetime.strptime(issue["created_at"], "%Y-%m-%dT%H:%M:%SZ") <= date_end
-        ]
-
-        all_issues.extend(filtered_issues)
-        page += 1
+        except Exception as e:
+            print(f"Error parsing page {page}: {e}")
+            page += 1
+            continue
 
     return pd.DataFrame(all_issues)
+
 def parse_issues(data_frame: pd.DataFrame) -> List[GitHub_Bug]:
     bugs = []
     for _, row in data_frame.iterrows():

@@ -17,7 +17,7 @@ def split(request_parameters: RequestParameters) -> List[UnclassifiedContent]:
     if Source.REDDIT in request_parameters.websites:
         print("Scraping Reddit")
         try:
-            output += scrape_reddit(request_parameters.query, 3, request_parameters.date_start, request_parameters.date_end)
+            output += scrape_reddit(request_parameters.query, 100, request_parameters.date_start, request_parameters.date_end)
         except Exception as error:
             print("Error Scraping Reddit"+str(error))
     if Source.GITHUB in request_parameters.websites:
