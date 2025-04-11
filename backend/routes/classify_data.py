@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from schemas.local_sentiment_schema import LocalSentiment
 from schemas.content_schema import Content
-from classify.ai_interface import classify
+from classify.ai_interface import classify_with_local_model
 def classify_data():
     data = request.get_json()
     urls = data.get('urls', [])
@@ -17,7 +17,7 @@ def classify_data():
             # Find associated content body
             content_record = Content.objects(source_url=url).first()
             if content_record:
-                sentiment = classify(content_record.content_body)
+                sentiment = classify_with_local_model(content_record.content_body)
                 # Store new sentiment in LocalSentiment table
                 LocalSentiment(url=url, sentiment=sentiment).save()
             else:

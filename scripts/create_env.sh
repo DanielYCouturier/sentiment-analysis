@@ -9,3 +9,5 @@ pip install torch
 pip install praw
 pip install dotenv
 pip install pandas
+pip install openai
+pip install google-generativeai

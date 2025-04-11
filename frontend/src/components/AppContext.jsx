@@ -58,7 +58,13 @@ export const AppContextProvider = ({ children }) => {
     };
     const fetchSentiments = async (urls) => {
         try {
-            const response = await fetch('http://localhost:5000/classifyData', {
+            const apiUrl = 
+            queryParams?.model === 'CHATGPT' 
+            ? 'http://localhost:5000/classifyGPT' 
+            : queryParams?.model === 'GEMINI'
+            ? 'http://localhost:5000/classifyGemini' 
+            : 'http://localhost:5000/classifyData';
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
