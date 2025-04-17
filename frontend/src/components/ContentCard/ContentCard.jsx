@@ -1,15 +1,52 @@
-import React from 'react';
+import { useState, React } from 'react';
 import ReactMarkdown from 'react-markdown';  // Import react-markdown
 import styles from "./ContentCard.module.css";
+import { useAppContext } from '../AppContext';
 
 function ContentCard({ json }) {
+
+    const sendCorrectionToBackend = async (url, sentiment) => {
+        try {
+            const response = await fetch('http://localhost:5000/correct_sentiment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url, sentiment }),
+            });
+    
+            const result = await response.json();
+            console.log('Backend response:', result);
+        } catch (error) {
+            console.error('Failed to send correction:', error);
+        }
+    };
+
+
+
+    const { corrections, setCorrections} = useAppContext();
+    const [showDropdown, setShowDropdown] = useState(false);
+
+    const handleCorrection = (value) => {
+        console.log("Correction selected:", value);
+        setCorrections(prev => ({
+            ...prev,
+            [json.source_url]: value
+        }));
+        sendCorrectionToBackend(json.source_url, value);
+        setShowDropdown(false);
+    };
+    const displaySentiment = corrections[json.source_url] !== undefined
+    ? corrections[json.source_url]
+    : json.sentiment;
+
     const getBorderColor = (sentiment) => {
         const hue = sentiment > 0 ? 120 : 0;
         const saturation = Math.round(Math.abs(sentiment) * 75);
         const lightness = 50;
         return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
     };
-    const borderColor = getBorderColor(json.sentiment);
+    const borderColor = getBorderColor(displaySentiment);
     const getVerboseSentiment = (score) => {
         if (score == 1) {
             return "Positive";
@@ -30,7 +67,6 @@ function ContentCard({ json }) {
             <p className={styles.title}>{json.title}</p>
             {json.username && json.username !== "N/A" && <p className={styles.username}> by {json.username}</p>}
 
-            {/* Render content_body with ReactMarkdown if the source is GitHub */}
             {json.source === "GITHUB" ? (
                 <ReactMarkdown>{json.content_body}</ReactMarkdown>
             ) : (
@@ -42,8 +78,21 @@ function ContentCard({ json }) {
                 month: "long",
                 day: "numeric",
             })}</p>
-            <p>Sentiment: {getVerboseSentiment(json.sentiment)} ({json.sentiment ?? "Loading..."})</p>
+            <p>Sentiment: {getVerboseSentiment(displaySentiment)} ({parseFloat(displaySentiment).toFixed(2) ?? "Loading..."})</p>
             <p><a href={json.source_url} target="_blank" rel="noopener noreferrer">{json.source_url}</a></p>
+
+            <div className={styles.dropdownContainer}>
+                <button onClick={() => setShowDropdown(prev => !prev)} className={styles.correctButton}>
+                    Correct Analysis
+                </button>
+                {showDropdown && (
+                    <div className={styles.dropdown}>
+                        <button onClick={() => handleCorrection(-1)}>Negative</button>
+                        <button onClick={() => handleCorrection(0)}>Neutral</button>
+                        <button onClick={() => handleCorrection(1)}>Positive</button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

@@ -36,33 +36,10 @@ def classify_with_local_model(content_body: str):
 
     # Map sentiment labels to a defined sentiment value
     if sentiment == 0:
-        # For example, you might define 0 as negative sentiment
         return -1
     elif sentiment == 1:
-        # And 1 as positive sentiment
         return 1
     elif sentiment == 2:
-        # If available, 2 might be neutral sentiment
         return 0
     else:
         raise ValueError(f"Unexpected sentiment class: {sentiment}")
-
-def classify_with_external_model(content: str, model_name: str):
-    """Stub for classifying sentiment with an external model (ChatGPT or Gemini)."""
-    # Replace this stub with actual API calls to ChatGPT or Gemini when needed
-    print(f"Using {model_name} model for sentiment analysis.")
-    return 0  # Stub response
-
-def classify(content, model: str = "LOCAL"):
-    """Classifies content using the selected AI model."""
-    global MODEL_SELECTION
-    MODEL_SELECTION = model.upper()  # Normalize model name for comparisons
-
-    if MODEL_SELECTION == "LOCAL":
-        predicted_sentiment = classify_with_local_model(content)
-    elif MODEL_SELECTION in ["CHATGPT", "GEMINI"]:
-        predicted_sentiment = classify_with_external_model(content, MODEL_SELECTION)
-    else:
-        raise ValueError(f"Unsupported model selection: {MODEL_SELECTION}")
-
-    return predicted_sentiment

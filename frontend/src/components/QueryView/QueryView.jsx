@@ -51,6 +51,8 @@ function QueryView() {
                     <option value="LOCAL">Local</option>
                     <option value="CHATGPT">ChatGPT</option>
                     <option value="GEMINI">Gemini</option>
+                    <option value="USER">User-Generated</option>
+
                 </select>
             </div>
             <input className={styles.button} type="submit" value="Apply"/>

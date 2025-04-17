@@ -8,6 +8,8 @@ export const AppContextProvider = ({ children }) => {
     const [queryParams, setQueryParams] = useState(null)
     const [query, setQuery] = useState(null)
     const [viewState, setViewState] = useState("CONTENT");
+    const [corrections, setCorrections] = useState({});
+
     useEffect(() => {
         if (query) {
             fetchData();
@@ -59,11 +61,13 @@ export const AppContextProvider = ({ children }) => {
     const fetchSentiments = async (urls) => {
         try {
             const apiUrl = 
-            queryParams?.model === 'CHATGPT' 
-            ? 'http://localhost:5000/classifyGPT' 
-            : queryParams?.model === 'GEMINI'
-            ? 'http://localhost:5000/classifyGemini' 
-            : 'http://localhost:5000/classifyData';
+            queryParams?.model === 'CHATGPT'
+                ? 'http://localhost:5000/classifyGPT'
+                : queryParams?.model === 'GEMINI'
+                ? 'http://localhost:5000/classifyGemini'
+                : queryParams?.model === 'USER'
+                ? 'http://localhost:5000/classifyUser'
+                : 'http://localhost:5000/classifyData';
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
@@ -92,7 +96,7 @@ export const AppContextProvider = ({ children }) => {
     };
 
     return (
-        <AppContext.Provider value={{ queryResult, queryParams, setQueryParams, viewState, setViewState, query, setQuery, fetchData }}>
+        <AppContext.Provider value={{ queryResult, queryParams, setQueryParams, viewState, setViewState, query, setQuery, fetchData,corrections, setCorrections }}>
             {children}
         </AppContext.Provider>
     );
