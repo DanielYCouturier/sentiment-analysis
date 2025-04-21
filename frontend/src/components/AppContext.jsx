@@ -4,7 +4,7 @@ const AppContext = createContext();
 export const useAppContext = () => useContext(AppContext);
 
 export const AppContextProvider = ({ children }) => {
-    const [queryResult, setQueryResult] = useState(null);
+    const [queryResult, setQueryResult] = useState([]);
     const [queryParams, setQueryParams] = useState(null)
     const [query, setQuery] = useState(null)
     const [viewState, setViewState] = useState("CONTENT");
@@ -50,8 +50,17 @@ export const AppContextProvider = ({ children }) => {
             })
             .then(result => {
                 console.log('Received JSON from server:', result);
-                result.sort((a, b) => new Date(b.date) - new Date(a.date));
-                setQueryResult(result);
+                
+                const keyword = queryParams?.keyword?.toLowerCase();
+            
+                const filtered = keyword
+                    ? result.filter(item =>
+                          item.content_body?.toLowerCase().includes(keyword)
+                      )
+                    : result;
+            
+                filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+                setQueryResult(filtered);
             })
             .catch(error => {
                 console.error(error);
@@ -60,14 +69,14 @@ export const AppContextProvider = ({ children }) => {
     };
     const fetchSentiments = async (urls) => {
         try {
-            const apiUrl = 
-            queryParams?.model === 'CHATGPT'
-                ? 'http://localhost:5000/classifyGPT'
-                : queryParams?.model === 'GEMINI'
-                ? 'http://localhost:5000/classifyGemini'
-                : queryParams?.model === 'USER'
-                ? 'http://localhost:5000/classifyUser'
-                : 'http://localhost:5000/classifyData';
+            const apiUrl =
+                queryParams?.model === 'CHATGPT'
+                    ? 'http://localhost:5000/classifyGPT'
+                    : queryParams?.model === 'GEMINI'
+                        ? 'http://localhost:5000/classifyGemini'
+                        : queryParams?.model === 'USER'
+                            ? 'http://localhost:5000/classifyUser'
+                            : 'http://localhost:5000/classifyData';
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
@@ -96,7 +105,7 @@ export const AppContextProvider = ({ children }) => {
     };
 
     return (
-        <AppContext.Provider value={{ queryResult, queryParams, setQueryParams, viewState, setViewState, query, setQuery, fetchData,corrections, setCorrections }}>
+        <AppContext.Provider value={{ queryResult, setQueryResult, queryParams, setQueryParams, viewState, setViewState, query, setQuery, fetchData, corrections, setCorrections }}>
             {children}
         </AppContext.Provider>
     );

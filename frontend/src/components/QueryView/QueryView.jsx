@@ -2,7 +2,7 @@ import { useAppContext } from '../AppContext';
 import styles from './QueryView.module.css';
 
 function QueryView() {
-    const { setQueryParams} = useAppContext();
+    const { setQueryParams } = useAppContext();
     const submitForm = (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
@@ -19,6 +19,16 @@ function QueryView() {
     return (
         <form className={styles.container} onSubmit={submitForm}>
             <h2 className={styles.title}>Filters & Settings</h2>
+            <div>
+                <label className={styles.label} htmlFor="keyword">Keyword</label>
+                <input
+                    className={styles.input}
+                    type="text"
+                    id="keyword"
+                    name="keyword"
+                    placeholder="Enter keywords..."
+                />
+            </div>
             <div>
                 <label className={styles.label} htmlFor="date-start">Date Start</label>
                 <input className={styles.input} type="date" id="date-start" name="dateStart" defaultValue={defaultDate} />
@@ -55,7 +65,7 @@ function QueryView() {
 
                 </select>
             </div>
-            <input className={styles.button} type="submit" value="Apply"/>
+            <input className={styles.button} type="submit" value="Apply" />
         </form>
     );
 }

@@ -3,7 +3,7 @@ import styles from "./TopBar.module.css";
 import { useAppContext } from '../AppContext';
 import { useEffect } from "react";
 function TopBar() {
-    const { query, setQuery, viewState, setViewState, fetchData } = useAppContext();
+    const { query, setQuery, viewState, setViewState, fetchData, setQueryResult } = useAppContext();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -22,10 +22,10 @@ function TopBar() {
         e.preventDefault();
         const formData = new FormData(e.target);
         const searchTerm = formData.get('searchTerm');
+        setQueryResult(null)
         setQuery(searchTerm);
-        if(searchTerm==query){
+        if(searchTerm==query)
             fetchData()
-        }
     };
 
     const handleViewStateChange = (e) => {

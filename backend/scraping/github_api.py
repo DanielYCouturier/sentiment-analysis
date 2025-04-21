@@ -57,11 +57,11 @@ def get_data_frame(repo_full_name: str, date_start: datetime, date_end: datetime
             if response.status_code != 200:
                 print(f"Warning: Failed to retrieve page {page} (status code {response.status_code}). Skipping.")
                 page += 1
-                continue
+                break
 
             issues = response.json()
             if not issues:
-                break
+                continue
 
             # Log the first issue's created_at for debug
             print(f"[Page {page}] First issue created at: {issues[0]['created_at']}")
@@ -94,7 +94,7 @@ def get_data_frame(repo_full_name: str, date_start: datetime, date_end: datetime
         except Exception as e:
             print(f"Error parsing page {page}: {e}")
             page += 1
-            continue
+            break
 
     return pd.DataFrame(all_issues)
 

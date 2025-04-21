@@ -82,15 +82,13 @@ function LineGraph({ interval, dataType }) {
     return intervalItems.map(innerList => innerList.length);
   };
   const getAverageSentiment = (intervalItems) => {
-
     return intervalItems.map(innerList => {
       if (innerList.length === 0) return 0;
-
+  
       const sum = innerList.reduce((acc, item) => acc + item.sentiment, 0);
-      return sum;
+      return sum / innerList.length; 
     });
   };
-
 
 
 

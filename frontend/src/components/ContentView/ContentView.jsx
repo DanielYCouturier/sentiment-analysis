@@ -11,7 +11,7 @@ function ContentView() {
     const [currentPage, setCurrentPage] = useState(1);
 
     const sortedResults = () => {
-        if (!queryResult || !Array.isArray(queryResult)) return [];
+        if (!queryResult || !Array.isArray(queryResult)) return null;
 
         return [...queryResult].sort((a, b) => {
             if (!sortConfig.key) return 0;
@@ -33,6 +33,9 @@ function ContentView() {
 
     const paginatedResults = () => {
         const sorted = sortedResults();
+        if (sorted === null) {
+            return null
+        }
         const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
         return sorted.slice(startIndex, startIndex + ITEMS_PER_PAGE);
     };
@@ -62,27 +65,31 @@ function ContentView() {
             </div>
 
             <div className={styles.cardList}>
-                {paginatedResults().length > 0 ? (
+                {paginatedResults() === null ? (
+                    <div className={styles.loader}></div>
+
+                ) : paginatedResults().length === 0 ? (
+                    <p>No data received yet.</p>
+                ) : (
                     paginatedResults().map((json, index) => (
                         <ContentCard key={index} json={json} />
                     ))
-                ) : (
-                    <p>No data received yet.</p>
                 )}
             </div>
 
+
             {totalPages > 1 && (
                 <div className={styles.paginationContainer}>
-                    <button 
-                        className={styles.pageButton} 
+                    <button
+                        className={styles.pageButton}
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
                     >
                         Previous
                     </button>
                     <span>Page {currentPage} of {totalPages}</span>
-                    <button 
-                        className={styles.pageButton} 
+                    <button
+                        className={styles.pageButton}
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
                     >
