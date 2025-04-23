@@ -2,7 +2,7 @@ import { useAppContext } from '../AppContext';
 import styles from './QueryView.module.css';
 
 function QueryView() {
-    const { setQueryParams } = useAppContext();
+    const { setQueryParams, setQueryResult,fetchData } = useAppContext();
     const submitForm = (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
@@ -10,7 +10,9 @@ function QueryView() {
         formData.forEach((value, key) => {
             data[key] = value;
         });
+        setQueryResult(null)
         setQueryParams(data)
+        fetchData()
     };
 
     const currentYear = new Date().getFullYear();
