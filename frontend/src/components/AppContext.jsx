@@ -91,11 +91,13 @@ export const AppContextProvider = ({ children }) => {
             console.log('Received sentiment data:', sentimentData);
 
             setQueryResult(prevResult =>
-                prevResult.map(obj =>
-                    sentimentData[obj.source_url] !== undefined
-                        ? { ...obj, sentiment: sentimentData[obj.source_url] }
-                        : obj
-                )
+                prevResult
+                    ? prevResult.map(obj =>
+                        sentimentData[obj.source_url] !== undefined
+                            ? { ...obj, sentiment: sentimentData[obj.source_url] }
+                            : obj
+                    )
+                    : []
             );
         } catch (error) {
             console.error(error);

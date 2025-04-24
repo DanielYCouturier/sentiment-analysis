@@ -8,7 +8,7 @@ from routes.classify_gemini import classify_gemini
 from routes.new_correction import correct_sentiment
 from routes.classify_user import classify_user
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+CORS(app, supports_credentials=True)
 
 connect('sentiment-analysis', host='mongodb://localhost:27017/')
 
