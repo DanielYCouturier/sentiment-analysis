@@ -35,7 +35,7 @@ export const AppContextProvider = ({ children }) => {
             ...queryParams,
             query: query
         };
-        fetch('http://localhost:5000/getData', {
+        fetch('http://backend.sentanalysis.us/getData', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -71,12 +71,12 @@ export const AppContextProvider = ({ children }) => {
         try {
             const apiUrl =
                 queryParams?.model === 'CHATGPT'
-                    ? 'http://localhost:5000/classifyGPT'
+                    ? 'http://backend.sentanalysis.us/classifyGPT'
                     : queryParams?.model === 'GEMINI'
-                        ? 'http://localhost:5000/classifyGemini'
+                        ? 'http://backend.sentanalysis.us/classifyGemini'
                         : queryParams?.model === 'USER'
-                            ? 'http://localhost:5000/classifyUser'
-                            : 'http://localhost:5000/classifyData';
+                            ? 'http://backend.sentanalysis.us/classifyUser'
+                            : 'http://backend.sentanalysis.us/classifyData';
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
